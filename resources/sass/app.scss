@@ -1,0 +1,187 @@
+$fa-font-path: "../webfonts";
+@import '~flag-icon-css/css/flag-icon.min.css';
+@import './../asset/css/gaxon-icon/style.css';
+@import '~perfect-scrollbar/css/perfect-scrollbar.css';
+@import './../asset/css/lite-style-1.min.css';
+@import '~@fortawesome/fontawesome-free/css/all.css';
+@import '~bootstrap-select/dist/css/bootstrap-select.min.css';
+@import '~dropify/dist/css/dropify.min.css';
+@import '~nestable2/jquery.nestable.css';
+
+//Custom CSS
+.close{
+    opacity: 100% !important;
+    color: white !important;
+    font-size: 30px !important;
+}
+
+.table th{
+    color: #fff !important;
+}
+.table th, .table td{padding: 1rem !important;}
+.required label:first-child::after{content:'*';color:#dc3545;}
+.swal2-popup.swal2-toast{padding: 1em !important;}
+.swal2-popup.swal2-toast .swal2-title{
+    flex-grow: 1;
+    justify-content: flex-start;
+}
+
+element {
+
+    display: flex;
+
+}
+.swal2-popup .swal2-title {
+    font-weight: 400;
+}
+.swal2-popup .swal2-title {
+    display: block;
+    position: relative;
+    max-width: 100%;
+    margin: 0 !important;
+    padding: 0;
+    color: #262626;
+    font-size: 1.8rem !important;
+    font-weight: 600;
+    text-align: center;
+    text-transform: none;
+    word-wrap: break-word;
+}
+.swal2-popup .swal2-actions{
+    margin: 0 !important;
+}
+#dataTable .custom-control-input:checked ~ .custom-control-label::before{
+    color: #fff !important;
+    border-color: #f5282c !important;
+    background-color: #f75e22 !important;
+    box-shadow: none !important;
+}
+
+div.dt-button-collection.dropdown-menu{
+    display: flex !important;
+    flex-wrap: wrap !important;
+    flex-direction: column !important;
+    background-color: #fa8c16 !important;
+}
+
+.dt-button.dropdown-item.button-columnVisibility.active{
+    color:white !important;
+}
+.dt-button.dropdown-item.active{
+    background-color: #fa8c16 !important;
+}
+
+.dt-button.dropdown-item.button-columnVisibility{
+    color: black !important;
+    padding: 5px 10px !important;
+}
+.dataTables_processing{
+    position: absolute;
+    top: 100px !important;
+    left: 50% !important;
+}
+.mr-10{
+    margin-right: 10px !important;
+}
+.ml-10{
+    margin-left: 10px !important;
+}
+.dt-buttons .btn-secondary{
+    margin-left: 5px !important;
+    margin-bottom: 5px !important;
+}
+.dt-buttons .btn-secondary:last-child{
+    margin-right: 0 !important;
+}
+#save-btn{
+    width: 90px;
+}
+.kt-spinner{position: relative;}
+.kt-spinner::before{
+    content: '';
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    position: absolute;
+    top:50%;
+    left:2px;
+    border-radius: 50%;
+}
+.kt-spinner::before{
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+
+}
+.kt-spinner::before{
+    -webkit-animation: kt-spinner .5s linear infinite;
+    animation: kt-spinner .5s linear infinite;
+}
+.kt-spinner.kt-spinner--light::before{
+    border: 2px solid #fff;
+    border-right: 2px solid transparent;
+}
+@-webkit-keyframes kt-spinner{
+    to{
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes kt-spinner{
+    to{
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+.btn-light,.btn-light:hover{
+    color: #545454;
+    background-color: #fff;
+    border-color: #ced4da;
+}
+.dropdown-item{cursor: pointer !important;}
+.dropdown-item.active,.dropdown-item:active{
+    color: #fff !important;
+    background-color: #fa8c16 !important;
+}
+
+//Menu Builder
+.menu-builder .dd{
+    position: relative;
+    display: block;
+    margin: 0;
+    padding: 0;
+    max-width: inherit;
+    list-style: none;
+    font-size: 13px;
+    line-height: 20px;
+}
+.menu-builder .dd .item_action{
+    z-index: 999999;
+    position: relative;
+    top: 9px;
+    right: 10px;
+}
+.menu-builder .dd .item_action .edit{
+    margin-right: 5px;
+}
+.menu-builder .dd-handle{
+    display: block;
+    height: 50px;
+    margin: 5px 0;
+    padding: 14px 25px;
+    color: #333;
+    text-decoration: none;
+    font-weight: 700;
+    border: 1px solid #ccc;
+    background: #fafafa;
+    border-radius: 3px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+.pt-24{
+    padding-top: 24px !important;
+}
+.btn-secondary{
+    color: white !important;
+}
