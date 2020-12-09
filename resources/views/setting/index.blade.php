@@ -285,7 +285,7 @@ $(document).ready(function(){
     $('#favicon img.spartan_image_placeholder').css('display','none');
     $('#favicon .spartan_remove_row').css('display','none');
     $('#favicon .img_').css('display','block');
-    $('#favicon .img_').attr('src','{{ asset("storage/".LOGO_PATH.config("settings.logo")) }}');
+    $('#favicon .img_').attr('src','{{ asset("storage/".LOGO_PATH.config("settings.favicon")) }}');
     @endif
 
 });

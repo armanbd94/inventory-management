@@ -34,8 +34,8 @@ class GeneralSettingFormRequest extends FormRequest
             'date_formate'      => 'string',
             'invoice_prefix'    => 'required|string',
             'invoice_number'    => 'required|string',
-            'logo'              => 'required|image|mimes:png,jpg,jpeg,svg',
-            'favicon'           => 'required|image|mimes:png',
+            'logo'              => 'nullable|image|mimes:png,jpg,jpeg,svg',
+            'favicon'           => 'nullable|image|mimes:png',
         ];
     }
 }

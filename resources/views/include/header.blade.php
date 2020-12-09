@@ -15,9 +15,9 @@
 
         <!-- Brand logo -->
         <span class="dt-brand__logo">
-        <a class="dt-brand__logo-link" href="index.html">
-          <img class="dt-brand__logo-img d-none d-lg-inline-block" src="{{ 'storage/'.LOGO_PATH.config('settings.logo') }}" alt="Wieldy">
-          <img class="dt-brand__logo-symbol d-lg-none" src="{{ 'storage/'.LOGO_PATH.config('settings.logo') }}" alt="Wieldy">
+        <a class="dt-brand__logo-link" href="{{ url('/') }}">
+          <img class="d-none d-lg-inline-block" src="{{ asset('storage/'.LOGO_PATH.config('settings.logo')) }}" alt="Logo" style="max-width: 100px;max-height:50px;"/>
+          <img class="dt-brand__logo-symbol d-lg-none" src="{{ asset('storage/'.LOGO_PATH.config('settings.logo')) }}" alt="Logo"/>
         </a>
       </span>
         <!-- /brand logo -->
