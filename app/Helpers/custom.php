@@ -1,6 +1,7 @@
 <?php 
 define('LOGO_PATH','logo/');
 define('USER_AVATAR_PATH','user/');
+define('BRAND_IMAGE_PATH','brand/');
 define('DATE_FORMAT',date('d M, Y',));
 define('GENDER',['1'=>'Male','2'=>'Female']);
 define('STATUS',['1'=>'Active','2'=>'Inactive']);
@@ -48,3 +49,10 @@ if(!function_exists('change_status')){
         '<span class="badge badge-danger change_status" data-id="' . $id . '" data-name="' . $name . '" data-status="1" style="cursor:pointer;">Inactive</span>';
     }
 }
+if(!function_exists('table_image')){
+    function table_image($image = null,$path,string $name = null){
+            return $image ? "<img src='storage/".$path.$image."' alt='".$name."' style='width:50px;'/>"
+            : "<img src='images/default.svg' alt='Default Image' style='width:50px;'/>";
+    }
+}
+

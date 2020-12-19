@@ -83,8 +83,14 @@ class PermissionService extends BaseService{
                 'created_at' => Carbon::now()
             ];
         }
-        return $this->permission->insert($permission_data);
         
+        $result = $this->permission->insert($permission_data);
+        if($result){
+            if(auth()->user()->role_id == 1){
+                $this->restore_session_permission_list();
+            }
+        }
+        return $result;
     }
 
     public function edit(Request $request)
@@ -97,17 +103,35 @@ class PermissionService extends BaseService{
         $collection = collect($request->validated());
         $updated_at = Carbon::now();
         $collection = $collection->merge(compact('updated_at'));
-        return $this->permission->update($collection->all(),$request->update_id);
+        $result = $this->permission->update($collection->all(),$request->update_id);
+        if($result){
+            if(auth()->user()->role_id == 1){
+                $this->restore_session_permission_list();
+            }
+        }
+        return $result;
     }
 
     public function delete(Request $request)
     {
-        return $this->permission->delete($request->id);
+        $result = $this->permission->delete($request->id);
+        if($result){
+            if(auth()->user()->role_id == 1){
+                $this->restore_session_permission_list();
+            }
+        }
+        return $result;
     }
 
     public function bulk_delete(Request $request)
     {
-        return $this->permission->destroy($request->ids);
+        $result = $this->permission->destroy($request->ids);
+        if($result){
+            if(auth()->user()->role_id == 1){
+                $this->restore_session_permission_list();
+            }
+        }
+        return $result;
     }
 
     public function restore_session_permission_list(){
@@ -116,7 +140,7 @@ class PermissionService extends BaseService{
         $permission = [];
         if(!$permissions->isEmpty())
         {
-            foreach ($permission as $value) {
+            foreach ($permissions as $value) {
                 array_push($permission,$value->slug);
             }
 
