@@ -9,9 +9,9 @@ class Warehouse extends BaseModel
     protected $fillable = ['name', 'phone', 'email', 'address', 'status', 'created_by', 'updated_by'];
     
 
-    public $name;
-    public $phone;
-    public $email;
+    protected $name;
+    protected $phone;
+    protected $email;
 
     public function setName($name)
     {

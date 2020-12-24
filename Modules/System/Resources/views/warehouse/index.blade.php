@@ -30,7 +30,7 @@
                     <h2 class="dt-page__title mb-0 text-primary"><i class="{{ $page_icon }}"></i> {{ $sub_title }}</h2>
                 </div>
                 <!-- /entry heading -->
-                @if (permission('tax-add'))
+                @if (permission('warehouse-add'))
                 <button class="btn btn-primary btn-sm" onclick="showFormModal('Add New Warehouse','Save')">
                     <i class="fas fa-plus-square"></i> Add New
                  </button>
@@ -75,7 +75,7 @@
                     <table id="dataTable" class="table table-striped table-bordered table-hover">
                         <thead class="bg-primary">
                             <tr>
-                                @if (permission('tax-bulk-delete'))
+                                @if (permission('warehouse-bulk-delete'))
                                 <th>
                                     <div class="custom-control custom-checkbox">
                                         <input type="checkbox" class="custom-control-input" id="select_all" onchange="select_all()">
@@ -145,7 +145,7 @@ $(document).ready(function(){
             }
         },
         "columnDefs": [{
-                @if (permission('tax-bulk-delete'))
+                @if (permission('warehouse-bulk-delete'))
                 "targets": [0,7],
                 @else 
                 "targets": [6],
@@ -154,7 +154,7 @@ $(document).ready(function(){
                 "className": "text-center"
             },
             {
-                @if (permission('tax-bulk-delete'))
+                @if (permission('warehouse-bulk-delete'))
                 "targets": [1,3,6],
                 @else 
                 "targets": [0,2,5],
@@ -167,7 +167,7 @@ $(document).ready(function(){
             "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'<'float-right'p>>>",
 
         "buttons": [
-            @if (permission('tax-report'))
+            @if (permission('warehouse-report'))
             {
                 'extend':'colvis','className':'btn btn-secondary btn-sm text-white','text':'Column'
             },
@@ -192,7 +192,7 @@ $(document).ready(function(){
                 'text':'CSV',
                 'className':'btn btn-secondary btn-sm text-white',
                 "title": "Menu List",
-                "filename": "tax-list",
+                "filename": "warehouse-list",
                 "exportOptions": {
                     columns: function (index, data, node) {
                         return table.column(index).visible();
@@ -204,7 +204,7 @@ $(document).ready(function(){
                 'text':'Excel',
                 'className':'btn btn-secondary btn-sm text-white',
                 "title": "Menu List",
-                "filename": "tax-list",
+                "filename": "warehouse-list",
                 "exportOptions": {
                     columns: function (index, data, node) {
                         return table.column(index).visible();
@@ -216,7 +216,7 @@ $(document).ready(function(){
                 'text':'PDF',
                 'className':'btn btn-secondary btn-sm text-white',
                 "title": "Menu List",
-                "filename": "tax-list",
+                "filename": "warehouse-list",
                 "orientation": "landscape", //portrait
                 "pageSize": "A4", //A3,A5,A6,legal,letter
                 "exportOptions": {
@@ -224,7 +224,7 @@ $(document).ready(function(){
                 },
             },
             @endif 
-            @if (permission('tax-bulk-delete'))
+            @if (permission('warehouse-bulk-delete'))
             {
                 'className':'btn btn-danger btn-sm delete_btn d-none text-white',
                 'text':'Delete',

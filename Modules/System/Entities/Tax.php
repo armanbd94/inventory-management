@@ -8,7 +8,7 @@ class Tax extends BaseModel
 {
     protected $fillable = ['name','rate','status','created_by','updated_by'];
     
-    public $name;
+    protected $name;
 
     public function setName($name)
     {

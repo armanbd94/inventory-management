@@ -8,7 +8,7 @@ class Brand extends BaseModel
 {
     protected $fillable = ['title','image','status','created_by','updated_by'];
     
-    public $title;
+    protected $title;
 
     public function setTitle($title)
     {

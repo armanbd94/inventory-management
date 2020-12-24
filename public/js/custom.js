@@ -178,3 +178,35 @@ function bulk_delete(ids,url,table,rows){
 }
 
 
+function change_status(id,status,name,table,url)
+{
+    Swal.fire({
+        title: 'Are you sure to change ' + name + ' status?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes!'
+    }).then((result) => {
+        if (result.value) {
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: { id: id,status:status, _token: _token},
+                dataType: "JSON",
+            }).done(function (response) {
+                if (response.status == "success") {
+                    Swal.fire("Status Changed", response.message, "success").then(function () {
+                        table.ajax.reload(null, false);
+                    });
+                }
+                if (response.status == "error") {
+                    Swal.fire('Oops...', response.message, "error");
+                }
+            }).fail(function () {
+                Swal.fire('Oops...', "Somthing went wrong with ajax!", "error");
+            });
+        }
+    });
+}
+
