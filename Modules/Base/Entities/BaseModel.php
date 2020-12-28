@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class BaseModel extends Model
 {
-    
+
     protected $order = ['id'=>'desc'];
     protected $column_order;
     protected $orderValue;

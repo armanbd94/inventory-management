@@ -25,7 +25,7 @@ class Module extends Model
 
     public function children(){
         return $this->hasMany(Module::class,'parent_id','id')
-                    ->orderBy('order','desc');
+                    ->orderBy('order','asc');
     }
 
     public function submenu(){

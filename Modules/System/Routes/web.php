@@ -57,5 +57,17 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('change-status', 'CustomerGroupController@change_status')->name('change.status');
     });
 
+    //Unit Group Routes
+    Route::get('unit', 'UnitController@index')->name('unit');
+    Route::group(['prefix' => 'unit', 'as'=>'unit.'], function () {
+        Route::post('datatable-data', 'UnitController@get_datatable_data')->name('datatable.data');
+        Route::post('store-or-update', 'UnitController@store_or_update_data')->name('store.or.update');
+        Route::post('edit', 'UnitController@edit')->name('edit');
+        Route::post('delete', 'UnitController@delete')->name('delete');
+        Route::post('bulk-delete', 'UnitController@bulk_delete')->name('bulk.delete');
+        Route::post('change-status', 'UnitController@change_status')->name('change.status');
+        Route::post('base-unit', 'UnitController@base_unit')->name('base.unit');
+    });
+
 
 });
