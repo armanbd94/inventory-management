@@ -32,8 +32,8 @@
         </div>
         <div class="col-md-6 bg-white">
             <div class="login_box">
-                     <a href="#" class="logo_text">
-                            <span>JL</span> Just Log
+                     <a href="{{ url('/') }}" class="logo_text">
+                        <img class="d-none d-lg-inline-block" src="{{ asset('storage/'.LOGO_PATH.config('settings.logo')) }}" alt="Logo" style="max-width: 250px;"/>
                         </a>
                     <div class="login_form">
                         <div class="login_form_inner">

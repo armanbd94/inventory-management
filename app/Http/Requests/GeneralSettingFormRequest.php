@@ -28,7 +28,7 @@ class GeneralSettingFormRequest extends FormRequest
             'title'             => 'required|string',
             'address'           => 'required|string',
             'currency_code'     => 'required|string',
-            'currency_code'     => 'required|string',
+            'currency_symbol'     => 'required|string',
             'currency_position' => 'required|string',
             'timezone'          => 'string',
             'date_formate'      => 'string',

@@ -24,4 +24,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
     Route::get('generate-code','ProductController@generate_code');
     Route::get('populate-unit/{id}','ProductController@populate_unit');
+
+    Route::get('print-barcode','BarcodeController@index');
+    Route::post('generate-barcode','BarcodeController@generateBarcode');
 });

@@ -16,6 +16,7 @@
         "laravel/framework": "^8.17",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^3.0",
+        "milon/barcode": "^8.0",
         "nwidart/laravel-modules": "^8.2",
         "typicms/nestablecollection": "^1.1"
     },
