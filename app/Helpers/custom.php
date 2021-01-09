@@ -7,6 +7,7 @@ define('DATE_FORMAT',date('d M, Y',));
 define('GENDER',['1'=>'Male','2'=>'Female']);
 define('TAX_METHOD',['1'=>'Exclusive','2'=>'Inclusive']);
 define('STATUS',['1'=>'Active','2'=>'Inactive']);
+define('PURCHASE_STATUS',['1'=>'Received','2'=>'Partial','3'=>'Pending','4'=>'Ordered']);
 define('DELETABLE',['1'=>'No','2'=>'Yes']);
 define('STATUS_LABEL',
 ['1'=>'<span class="badge badge-success">Active</span>',

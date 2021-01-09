@@ -4,5 +4,6 @@
     "System": true,
     "Supplier": true,
     "Customer": true,
-    "Product": true
+    "Product": true,
+    "Purchase": true
 }
