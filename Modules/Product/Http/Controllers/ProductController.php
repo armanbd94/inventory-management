@@ -232,4 +232,74 @@ class ProductController extends BaseController
         $units = Unit::where('base_unit',$id)->orWhere('id',$id)->pluck('unit_name','id');
         return json_encode($units);
     }
+
+    public function product_autocomplete_search(Request $request)
+    {
+        if($request->ajax())
+        {
+            if(!empty($request->search))
+            {
+                $data = $this->model->where('name','like','%'.$request->search.'%')
+                                    ->orWhere('code','like','%'.$request->search.'%')
+                                    ->get();
+                $output = [];
+                if(!$data->isEmpty())
+                {
+                    foreach ($data as $key => $value) {
+                        $item['id'] = $value->id;
+                        $item['value'] = $value->code.' - '.$value->name;
+                        $item['label'] = $value->code.' - '.$value->name;
+                        $output[] = $item;
+                    }
+                }else{
+                    $output['value'] = '';
+                    $output['label'] = 'No Record Found';
+                }
+                return $output;
+            }
+        }
+    }
+
+    public function product_search(Request $request)
+    {
+        if($request->ajax())
+        {
+            $code = explode('-',$request['data']);
+            $product_data = $this->model->with('tax')->where('code',$code[0])->first();
+            if($product_data)
+            {
+                $product['id']         = $product_data->id;
+                $product['name']       = $product_data->name;
+                $product['code']       = $product_data->code;
+                $product['cost']       = $product_data->cost;
+                $product['tax_rate']   = $product_data->rate;
+                $product['tax_name']   = $product_data->name;
+                $product['tax_method'] = $product_data->tax_method;
+    
+                $units = Unit::where('base_unit',$product_data->unit_id)->orWhere('id',$product_data->unit_id)->get();
+                $unit_name            = [];
+                $unit_operator        = [];
+                $unit_operation_value = [];
+                if($units)
+                {
+                    foreach ($units as $unit) {
+                        if($product_data->purchase_unit_id == $unit->id)
+                        {
+                            array_unshift($unit_name,$unit->unit_name);
+                            array_unshift($unit_operator,$unit->operator);
+                            array_unshift($unit_operation_value,$unit->operation_value);
+                        }else{
+                            $unit_name           [] = $unit->unit_name;
+                            $unit_operator       [] = $unit->operator;
+                            $unit_operation_value[] = $unit->operation_value;
+                        }
+                    }
+                }
+                $product['unit_name'] = implode(',',$unit_name).',';
+                $product['unit_operator'] = implode(',',$unit_operator).',';
+                $product['unit_operation_value'] = implode(',',$unit_operation_value).',';
+                return $product;
+            }
+        }
+    }
 }

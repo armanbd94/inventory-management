@@ -5,7 +5,12 @@
 @endsection
 
 @push('stylesheet')
-    
+<link rel="stylesheet" href="css/jquery-ui.css">
+<style>
+    .ui-menu .ui-menu-item{
+        padding: 10px !important;
+    }
+</style>
 @endpush
 
 @section('content')
@@ -30,7 +35,7 @@
                     <h2 class="dt-page__title mb-0 text-primary"><i class="{{ $page_icon }}"></i> {{ $sub_title }}</h2>
                 </div>
                 <!-- /entry heading -->
-                <a href="{{ route('purchase') }}" class="btn btn-warning btn-sm">
+                <a href="{{ route('purchase') }}" class="btn btn-danger btn-sm">
                     <i class="fas fa-arrow-left"></i> Back
                  </a>
             </div>
@@ -83,7 +88,7 @@
                             </div>
 
                             <div class="col-md-12">
-                                <table class="table table-bordered">
+                                <table class="table table-bordered" id="product-list">
                                     <thead class="bg-primary">
                                         <th>Name</th>
                                         <th>Code</th>
@@ -175,7 +180,147 @@
 @endsection
 
 @push('script')
+<script src="js/jquery-ui.js"></script>
 <script>
+$(document).ready(function(){
+    $('#product_code_name').autocomplete({
+        source: function (request,response) {
+            $.ajax({
+                url: "{{ url('product-autocomplete-search') }}",
+                type:"POST",
+                dataType:"JSON",
+                data:{_token:_token,search:request.term},
+                success: function(data){
+                    response(data);
+                }
+            });
+        },
+        minLength:1,
+        response: function(event, ui) {
+            if(ui.content.length == 1)
+            {
+                var data = ui.content[0].value;
+                $(this).autocomplete('close');
+                product_search(data);
+            }
+        },
+        select: function(event,ui){
+            var data = ui.item.value;
+            product_search(data);
+        }
 
+    }).data('ui-autocomplete')._renderItem = function(ul, item){
+        return $("<li class='ui-autocomplete-row'></li>")
+        .data("item.autocomplete",item)
+        .append(item.label)
+        .appendTo(ul);
+    };
+
+    //array data depend on warehouse
+    var product_array = [];
+    var product_code  = [];
+    var product_name  = [];
+    var product_qty   = [];
+
+    // array data with selection
+    var product_cost         = [];
+    var product_discount     = [];
+    var tax_rate             = [];
+    var tax_name             = [];
+    var tax_method           = [];
+    var unit_name            = [];
+    var unit_operator        = [];
+    var unit_operation_value = [];
+
+    //temporary array
+    var temp_unit_name            = [];
+    var temp_unit_operator        = [];
+    var temp_unit_operation_value = [];
+
+    var rowindex;
+    var customer_group_rate;
+    var row_product_cost;
+
+    var count = 1;
+    function product_search(data)
+    {
+        $.ajax({
+            url: "{{ url('product-search') }}",
+            type:"POST",
+            data:{data:data,_token:_token},
+            success: function(data)
+            {
+                var flag = 1;
+                $('.product-code').each(function(i){
+                    if($(this).val() == data.code){
+                        rowindex = i;
+                        var qty = parseFloat($('#product-list tbody tr:nth-child('+(rowindex + 1)+') .qty').val()) + 1;
+                        $('#product-list tbody tr:nth-child('+(rowindex + 1)+') .qty').val(qty);
+                        // calculateProductData(qty);
+                        flag = 0;
+                    }
+                });
+                $('#product_code_name').val('');
+                if(flag)
+                {
+                    temp_unit_name = data.unit_name.split(',');
+                    var newRow = $('<tr>');
+                    var cols = '';
+                    cols += `<td>`+data.name+`</td>`;
+                    
+                    cols += `<td>`+data.code+`</td>`;
+                    cols += `<td class="unit-name">`+temp_unit_name[0]+`</td>`;
+                    cols += `<td><input type="text" class="form-control qty" name="products[`+count+`][qty]"
+                        id="products_`+count+`_qty" value="1"></td>`;
+
+                    if($('#purchase_status option:selected').val() == 1)
+                    {
+                        cols += `<td class="received-product-qty d-none"><input type="text" class="form-control received"
+                            name="products[`+count+`][received]" value="1"></td>`;
+
+                    }else if($('#purchase_status option:selected').val() == 2){
+
+                        cols += `<td class="received-product-qty"><input type="text" class="form-control received"
+                            name="products[`+count+`][received]" value="1"></td>`;
+                    }else{
+                        cols += `<td class="received-product-qty d-none"><input type="text" class="form-control received"
+                            name="products[`+count+`][received]" value="0"></td>`;
+                    }
+
+                    cols += `<td class="net_unit_cost"></td>`;
+                    cols += `<td class="discount"></td>`;
+                    cols += `<td class="tax"></td>`;
+                    cols += `<td class="sub-total"></td>`;
+                    cols += `<td><button type="button" class="edit-product btn btn-sm btn-primary mr-2" data-toggle="modal"
+                        data-target="#editModal"><i class="fas fa-edit"></i></button>
+                        <button type="button" class="btn btn-danger btn-sm remove-product"><i class="fas fa-trash"></i></button></td>`;
+                    cols += `<input type="hidden" class="product-id" name="products[`+count+`][id]"  value="`+data.id+`">`;
+                    cols += `<input type="hidden" class="product-code" name="products[`+count+`][code]" value="`+data.code+`">`;
+                    cols += `<input type="hidden" class="product-unit" name="products[`+count+`][unit]" value="`+temp_unit_name[0]+`">`;
+                    cols += `<input type="hidden" class="net_unit_cost" name="products[`+count+`][net_unit_cost]">`;
+                    cols += `<input type="hidden" class="discount-value" name="products[`+count+`][discount]">`;
+                    cols += `<input type="hidden" class="tax-rate" name="products[`+count+`][tax_rate]" value="`+data.tax_rate+`">`;
+                    cols += `<input type="hidden" class="tax-value" name="products[`+count+`][tax]">`;
+                    cols += `<input type="hidden" class="subtotal-value" name="products[`+count+`][subtotal]">`;
+
+                    newRow.append(cols);
+                    $('#product-list tbody').append(newRow);
+
+                    product_cost.push(parseFloat(data.cost));
+                    product_discount.push('0.00');
+                    tax_rate.push(parseFloat(data.tax_rate));
+                    tax_name.push(parseFloat(data.tax_name));
+                    tax_method.push(parseFloat(data.tax_method));
+                    unit_name.push(parseFloat(data.unit_name));
+                    unit_operator.push(parseFloat(data.unit_operator));
+                    unit_operation_value.push(parseFloat(data.unit_operation_value));
+                    rowindex = newRow.index();
+                    // calculateProductData(1);
+                }
+
+            }
+        });
+    }
+});
 </script>
 @endpush

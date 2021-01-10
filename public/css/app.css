@@ -26904,6 +26904,7 @@ readers do not read off random characters that represent icons */
 .table th,
 .table td {
   padding: 1rem !important;
+  vertical-align: middle !important;
 }
 
 .required label:first-child::after {
@@ -27235,3 +27236,11 @@ Begin :: Permission Tree
 /********************
 End :: Permission Tree
 *********************/
+.ui-menu .ui-menu-item{
+    background: #fa8c16 !important;
+    color: white !important;
+}
+.ui-menu .ui-menu-item:hover{
+    background: #038fde !important;
+    color: white !important;
+}
