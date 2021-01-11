@@ -126,11 +126,11 @@
 
                             <div class="form-group col-md-4">
                                 <label for="order_discount">Order Discount</label>
-                                <input type="number" class="form-control" name="order_discount" id="order_discount">
+                                <input type="text" class="form-control" name="order_discount" id="order_discount">
                             </div>
                             <div class="form-group col-md-4">
                                 <label for="shipping_cost">Shipping Cost</label>
-                                <input type="number" class="form-control" name="shipping_cost" id="shipping_cost">
+                                <input type="text" class="form-control" name="shipping_cost" id="shipping_cost">
                             </div>
                             <div class="form-group col-md-12">
                                 <label for="shipping_cost">Note</label>
@@ -141,9 +141,9 @@
                                     <thead class="bg-primary">
                                         <th><strong>Items</strong><span class="float-right" id="items">0.00</span></th>
                                         <th><strong>Total</strong><span class="float-right" id="subtotal">0.00</span></th>
-                                        <th><strong>Order Tax</strong><span class="float-right" id="order_tax">0.00</span></th>
-                                        <th><strong>Order Discount</strong><span class="float-right" id="order_discount">0.00</span></th>
-                                        <th><strong>Shipping Cost</strong><span class="float-right" id="shipping_cost">0.00</span></th>
+                                        <th><strong>Order Tax</strong><span class="float-right" id="order_total_tax">0.00</span></th>
+                                        <th><strong>Order Discount</strong><span class="float-right" id="order_total_discount">0.00</span></th>
+                                        <th><strong>Shipping Cost</strong><span class="float-right" id="shipping_total_cost">0.00</span></th>
                                         <th><strong>Grand Total</strong><span class="float-right" id="grand_total">0.00</span></th>
                                     </thead>
                                 </table>
@@ -256,7 +256,7 @@ $(document).ready(function(){
                         rowindex = i;
                         var qty = parseFloat($('#product-list tbody tr:nth-child('+(rowindex + 1)+') .qty').val()) + 1;
                         $('#product-list tbody tr:nth-child('+(rowindex + 1)+') .qty').val(qty);
-                        // calculateProductData(qty);
+                        calculateProductData(qty);
                         flag = 0;
                     }
                 });
@@ -270,27 +270,27 @@ $(document).ready(function(){
                     
                     cols += `<td>`+data.code+`</td>`;
                     cols += `<td class="unit-name">`+temp_unit_name[0]+`</td>`;
-                    cols += `<td><input type="text" class="form-control qty" name="products[`+count+`][qty]"
+                    cols += `<td><input type="text" class="form-control qty text-center" name="products[`+count+`][qty]"
                         id="products_`+count+`_qty" value="1"></td>`;
 
                     if($('#purchase_status option:selected').val() == 1)
                     {
-                        cols += `<td class="received-product-qty d-none"><input type="text" class="form-control received"
+                        cols += `<td class="received-product-qty d-none"><input type="text" class="form-control received text-center"
                             name="products[`+count+`][received]" value="1"></td>`;
 
                     }else if($('#purchase_status option:selected').val() == 2){
 
-                        cols += `<td class="received-product-qty"><input type="text" class="form-control received"
+                        cols += `<td class="received-product-qty"><input type="text" class="form-control received text-center"
                             name="products[`+count+`][received]" value="1"></td>`;
                     }else{
-                        cols += `<td class="received-product-qty d-none"><input type="text" class="form-control received"
+                        cols += `<td class="received-product-qty d-none"><input type="text" class="form-control received text-center"
                             name="products[`+count+`][received]" value="0"></td>`;
                     }
 
-                    cols += `<td class="net_unit_cost"></td>`;
-                    cols += `<td class="discount"></td>`;
-                    cols += `<td class="tax"></td>`;
-                    cols += `<td class="sub-total"></td>`;
+                    cols += `<td class="net_unit_cost text-right"></td>`;
+                    cols += `<td class="discount text-right"></td>`;
+                    cols += `<td class="tax text-right"></td>`;
+                    cols += `<td class="sub-total text-right"></td>`;
                     cols += `<td><button type="button" class="edit-product btn btn-sm btn-primary mr-2" data-toggle="modal"
                         data-target="#editModal"><i class="fas fa-edit"></i></button>
                         <button type="button" class="btn btn-danger btn-sm remove-product"><i class="fas fa-trash"></i></button></td>`;
@@ -309,18 +309,146 @@ $(document).ready(function(){
                     product_cost.push(parseFloat(data.cost));
                     product_discount.push('0.00');
                     tax_rate.push(parseFloat(data.tax_rate));
-                    tax_name.push(parseFloat(data.tax_name));
-                    tax_method.push(parseFloat(data.tax_method));
-                    unit_name.push(parseFloat(data.unit_name));
-                    unit_operator.push(parseFloat(data.unit_operator));
-                    unit_operation_value.push(parseFloat(data.unit_operation_value));
+                    tax_name.push(data.tax_name);
+                    tax_method.push(data.tax_method);
+                    unit_name.push(data.unit_name);
+                    unit_operator.push(data.unit_operator);
+                    unit_operation_value.push(data.unit_operation_value);
                     rowindex = newRow.index();
-                    // calculateProductData(1);
+                    calculateProductData(1);
                 }
 
             }
         });
     }
+
+    function calculateProductData(quantity){
+        unitConversion();
+        $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('td:nth-child(7)').text((product_discount[rowindex] * quantity).toFixed(2));
+        $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('.discount-value').val((product_discount[rowindex] * quantity).toFixed(2));
+        $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('.tax-rate').val(tax_rate[rowindex].toFixed(2));
+
+        if(tax_method[rowindex] == 1)
+        {
+            var net_unit_cost = row_product_cost - product_discount[rowindex];
+            var tax = net_unit_cost * quantity * (tax_rate[rowindex]/100);
+            var sub_total = (net_unit_cost * quantity) + tax;
+
+        }else{
+            var sub_total_unit = row_product_cost - product_discount[rowindex];
+            var net_unit_cost = (100 / (100 + tax[rowindex])) * sub_total_unit;
+            var tax = (sub_total_unit - net_unit_cost) * quantity;
+            var sub_total = sub_total_unit * quantity;
+        }
+        $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('td:nth-child(6)').text(net_unit_cost.toFixed(2));
+        $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('.net_unit_cost').val(net_unit_cost.toFixed(2));
+        $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('td:nth-child(8)').text(tax.toFixed(2));
+        $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('.tax-value').val(tax.toFixed(2));
+        $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('td:nth-child(9)').text(sub_total.toFixed(2));
+        $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('.subtotal-value').val(sub_total.toFixed(2));
+
+        calculateTotal();
+    }
+
+    function unitConversion()
+    {
+        var row_unit_operator = unit_operator[rowindex].slice(0,unit_operator[rowindex].indexOf(','));
+        var row_unit_operation_value = unit_operation_value[rowindex].slice(0,unit_operation_value[rowindex].indexOf(','));
+        row_unit_operation_value = parseFloat(row_unit_operation_value);
+        if(row_unit_operator == '*')
+        {
+            row_product_cost = product_cost[rowindex] * row_unit_operation_value;
+        }else{
+            row_product_cost = product_cost[rowindex] / row_unit_operation_value;
+        }
+    }
+
+    function calculateTotal()
+    {
+        //sum of qty
+        var total_qty = 0;
+        $('.qty').each(function() {
+            if($(this).val() == ''){
+                total_qty += 0;
+            }else{
+                total_qty += parseFloat($(this).val());
+            }
+        });
+        $('#total-qty').text(total_qty);
+        $('input[name="total_qty"]').val(total_qty);
+
+        //sum of discount
+        var total_discount = 0;
+        $('.discount').each(function() {
+            total_discount += parseFloat($(this).text());
+        });
+        $('#total-discount').text(total_discount.toFixed(2));
+        $('input[name="total_discount"]').val(total_discount.toFixed(2));
+
+        //sum of tax
+        var total_tax = 0;
+        $('.tax').each(function() {
+            total_tax += parseFloat($(this).text());
+        });
+        $('#total-tax').text(total_tax.toFixed(2));
+        $('input[name="total_tax"]').val(total_tax.toFixed(2));
+
+        //sum of subtotal
+        var total = 0;
+        $('.sub-total').each(function() {
+            total += parseFloat($(this).text());
+        });
+        $('#total').text(total.toFixed(2));
+        $('input[name="total_cost"]').val(total.toFixed(2));
+
+        calculateGrandTotal();
+    }
+
+    function calculateGrandTotal()
+    {
+        var item = $('#product-list tbody tr:last').index();
+        var total_qty = parseFloat($('#total-qty').text());
+        var subtotal = parseFloat($('#total').text());
+        var order_tax = parseFloat($('select[name="order_tax"]').val());
+        var order_discount = parseFloat($('#order_discount').val());
+        var shipping_cost = parseFloat($('#shipping_cost').val());
+
+        if(!order_discount){
+            order_discount = 0.00;
+        }
+        if(!shipping_cost){
+            shipping_cost = 0.00;
+        }
+
+        item = ++item + '(' + total_qty + ')';
+        order_tax = (subtotal - order_discount) * (order_tax / 100);
+        var grand_total = (subtotal + order_tax + shipping_cost) - order_discount;
+
+        $('#item').text(item);
+        $('input[name="item"]').val($('#product-list tbody tr:last').index() + 1);
+        $('#subtotal').text(subtotal.toFixed(2));
+        $('#order_total_tax').text(order_tax.toFixed(2));
+        $('input[name="order_tax"]').val(order_tax.toFixed(2));
+        $('#order_total_discount').text(order_discount.toFixed(2));
+        $('#shipping_total_cost').text(shipping_cost.toFixed(2));
+        $('#grand_total').text(grand_total.toFixed(2));
+        $('input[name="grand_total"]').val(grand_total.toFixed(2));
+    }
+
+    $('input[name="order_discount"]').on('input',function(){
+        calculateGrandTotal();
+    });
+    $('input[name="shipping_cost"]').on('input',function(){
+        calculateGrandTotal();
+    });
+    $('select[name="order_tax"]').on('change',function(){
+        calculateGrandTotal();
+    });
+
+
+
+
+
 });
 </script>
 @endpush

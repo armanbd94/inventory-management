@@ -272,8 +272,8 @@ class ProductController extends BaseController
                 $product['name']       = $product_data->name;
                 $product['code']       = $product_data->code;
                 $product['cost']       = $product_data->cost;
-                $product['tax_rate']   = $product_data->rate;
-                $product['tax_name']   = $product_data->name;
+                $product['tax_rate']   = $product_data->tax->rate;
+                $product['tax_name']   = $product_data->tax->name;
                 $product['tax_method'] = $product_data->tax_method;
     
                 $units = Unit::where('base_unit',$product_data->unit_id)->orWhere('id',$product_data->unit_id)->get();
