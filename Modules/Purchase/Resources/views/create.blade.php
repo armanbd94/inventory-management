@@ -175,8 +175,68 @@
 
     </div>
     <!-- /grid -->
-
 </div>
+
+<!-- Start :: Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="model-1" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+
+      <!-- Modal Content -->
+      <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header bg-primary">
+          <h3 class="modal-title text-white" id="model-title"></h3>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <!-- /modal header -->
+        <form id="edit_form" method="post">
+          @csrf
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <div class="row">
+                    <x-form.textbox labelName="Quantity" name="edit_qty" required="required" col="col-md-12"/>
+                    <x-form.textbox labelName="Unit Discount" name="edit_discount" col="col-md-12"/>
+                    <x-form.textbox labelName="Unit Cost" name="edit_unit_cost" col="col-md-12"/>
+                    @php 
+                    $tax_name_all[] = 'No Tax';
+                    $tax_rate_all[] = 0;
+                    foreach ($taxes as $tax) {
+                        $tax_name_all[] = $tax->name;
+                        $tax_rate_all[] = $tax->rate;
+                    }
+                    @endphp
+                    <div class="form-group col-md-12">
+                        <label for="edit_tax_rate">Tax Rate</label>
+                        <select name="edit_tax_rate" id="edit_tax_rate" class="form-control selectpicker">
+                            @foreach ($tax_name_all as $key => $value)
+                                <option value="{{ $key }}">{{ $value }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="edit_unit">Product Unit</label>
+                        <select name="edit_unit" id="edit_unit" class="form-control selectpicker"></select>
+                    </div>
+                </div>
+            </div>
+            <!-- /modal body -->
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary btn-sm" id="update-btn">Update</button>
+            </div>
+            <!-- /modal footer -->
+        </form>
+      </div>
+      <!-- /modal content -->
+
+    </div>
+  </div>
+<!-- End :: Edit Modal -->
 @endsection
 
 @push('script')
@@ -238,8 +298,117 @@ $(document).ready(function(){
     var temp_unit_operation_value = [];
 
     var rowindex;
-    var customer_group_rate;
     var row_product_cost;
+
+    //Edit Product
+    $('#product-list').on('click','.edit-product', function(){
+        rowindex = $(this).closest('tr').index();
+        var row_product_name = $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('td:nth-child(1)').text();
+        var row_product_code = $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('td:nth-child(2)').text();
+        $('#model-title').text(row_product_name+'('+row_product_code+')');
+
+        var qty = $(this).closest('tr').find('.qty').val();
+        $('#edit_qty').val(qty);
+        $('#edit_discount').val(parseFloat(product_discount[rowindex]).toFixed(2));
+
+        unitConversion();
+        $('#edit_unit_cost').val(row_product_cost.toFixed(2));
+
+        var tax_name_all = <?php echo json_encode($tax_name_all); ?>;
+        var pos = tax_name_all.indexOf(tax_name[rowindex]);
+        $('#edit_tax_rate').val(pos);
+
+        temp_unit_name = (unit_name[rowindex]).split(',');
+        temp_unit_name.pop();
+        temp_unit_operator = (unit_operator[rowindex]).split(',');
+        temp_unit_operator.pop();
+        temp_unit_operation_value = (unit_operation_value[rowindex]).split(',');
+        temp_unit_operation_value.pop();
+
+        $('#edit_unit').empty();
+
+        $.each(temp_unit_name, function(key,value){
+            $('#edit_unit').append('<option value="'+key+'">'+value+'</option>');
+        });
+        $('.selectpicker').selectpicker('refresh');
+    });
+
+    //Update Edit Product Data
+    $('#update-btn').on('click',function(){
+        var edit_discount  = $('#edit_discount').val();
+        var edit_qty       = $('#edit_qty').val();
+        var edit_unit_cost = $('#edit_unit_cost').val();
+
+        if(parseFloat(edit_discount) > parseFloat(edit_unit_cost))
+        {
+            notification('error','Invalid discount input');
+            return;
+        }
+
+        if(edit_qty < 0)
+        {
+            $('#edit_qty').val(1); 
+            edit_qty = 1;
+            notification('error','Quantity can\'t be less than 1');
+        }
+
+        var row_unit_operator = unit_operator[rowindex].slice(0,unit_operator[rowindex].indexOf(','));
+        var row_unit_operation_value = unit_operation_value[rowindex].slice(0,unit_operation_value[rowindex].indexOf(','));
+        row_unit_operation_value = parseFloat(row_unit_operation_value);
+        var tax_rate_all = <?php echo json_encode($tax_rate_all); ?>;
+
+        tax_rate[rowindex] = parseFloat(tax_rate_all[$('#edit_tax_rate option:selected').val()]);
+        tax_name[rowindex] = $('#edit_tax_rate option:selected').text();
+
+        if(row_unit_operator == '*')
+        {
+            product_cost[rowindex] = $('#edit_unit_cost').val() / row_unit_operation_value;
+        }else{
+            product_cost[rowindex] = $('#edit_unit_cost').val() * row_unit_operation_value;
+        }
+
+        product_discount[rowindex] = $('#edit_discount').val();
+        var position = $('#edit_unit').val();
+        var temp_operator = temp_unit_operator[position];
+        var temp_operation_value = temp_unit_operation_value[position];
+        $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('.purchase-unit').val(temp_unit_name[position]);
+        temp_unit_name.splice(position,1);
+        temp_unit_operator.splice(position,1);
+        temp_unit_operation_value.splice(position,1);
+
+        temp_unit_name.unshift($('#edit_unit option:selected').text());
+        temp_unit_operator.unshift(temp_operator);
+        temp_unit_operation_value.unshift(temp_operation_value);
+
+        unit_name[rowindex] = temp_unit_name.toString() + ',';
+        unit_operator[rowindex] = temp_unit_operator.toString() + ',';
+        unit_operation_value[rowindex] = temp_unit_operation_value.toString() + ',';
+        checkQuantity(edit_qty,false);
+    });
+
+    $('#product-list').on('keyup','.qty',function(){
+        rowindex = $(this).closest('tr').index();
+        if($(this).val() < 1 && $(this).val() != ''){
+            $('#product-list tbody tr:nth-child('+(rowindex + 1)+') .qty').val(1);
+            notification('error','Qunatity can\'t be less than 1');
+        }
+
+        checkQuantity($(this).val(),true);
+    });
+
+    $('#product-list').on('click','.remove-product',function(){
+        rowindex = $(this).closest('tr').index();
+        product_cost.splice(rowindex,1);
+        product_discount.splice(rowindex,1);
+        tax_rate.splice(rowindex,1);
+        tax_name.splice(rowindex,1);
+        tax_method.splice(rowindex,1);
+        unit_name.splice(rowindex,1);
+        unit_operator.splice(rowindex,1);
+        unit_operation_value.splice(rowindex,1);
+        $(this).closest('tr').remove();
+        calculateTotal();
+    });
 
     var count = 1;
     function product_search(data)
@@ -269,7 +438,7 @@ $(document).ready(function(){
                     cols += `<td>`+data.name+`</td>`;
                     
                     cols += `<td>`+data.code+`</td>`;
-                    cols += `<td class="unit-name">`+temp_unit_name[0]+`</td>`;
+                    cols += `<td class="unit-name"></td>`;
                     cols += `<td><input type="text" class="form-control qty text-center" name="products[`+count+`][qty]"
                         id="products_`+count+`_qty" value="1"></td>`;
 
@@ -322,11 +491,36 @@ $(document).ready(function(){
         });
     }
 
-    function calculateProductData(quantity){
+    function checkQuantity(purchase_qty,flag)
+    {
+        var row_product_code = $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('td:nth-child(2)').text();
+        var pos = product_code.indexOf(row_product_code);
+        var operator = unit_operator[rowindex].split(',');
+        var operation_value = unit_operation_value[rowindex].split(',');
+
+        if(operator[0] == '*')
+        {
+            total_qty = purchase_qty * operation_value[0];
+        }else{
+            total_qty = purchase_qty / operation_value[0];
+        }
+
+        $('#editModal').modal('hide');
+        $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('.qty').val(purchase_qty);
+        var status = $('#purchase_status option:selected').val();
+        if(status == '1' || status == '2'){
+            $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('.received').val(purchase_qty);
+        }
+        calculateProductData(purchase_qty);
+
+    }
+
+    function calculateProductData(quantity){ 
         unitConversion();
         $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('td:nth-child(7)').text((product_discount[rowindex] * quantity).toFixed(2));
         $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('.discount-value').val((product_discount[rowindex] * quantity).toFixed(2));
         $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('.tax-rate').val(tax_rate[rowindex].toFixed(2));
+        $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('.unit-name').text(unit_name[rowindex].slice(0,unit_name[rowindex].indexOf(",")));
 
         if(tax_method[rowindex] == 1)
         {
@@ -336,7 +530,7 @@ $(document).ready(function(){
 
         }else{
             var sub_total_unit = row_product_cost - product_discount[rowindex];
-            var net_unit_cost = (100 / (100 + tax[rowindex])) * sub_total_unit;
+            var net_unit_cost = (100 / (100 + tax_rate[rowindex])) * sub_total_unit;
             var tax = (sub_total_unit - net_unit_cost) * quantity;
             var sub_total = sub_total_unit * quantity;
         }
@@ -446,7 +640,27 @@ $(document).ready(function(){
     });
 
 
-
+    $('#purchase_status').on('change', function(){
+        var status = $('#purchase_status option:selected').val();
+        if(status == 2){
+            $('.received-product-qty').removeClass('d-none');
+            $('.qty').each(function(){
+                rowindex = $(this).closest('tr').index();
+                $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('.received').val($(this).val());
+            });
+        }else if(status == 3 || status == 4){
+            $('.received-product-qty').addClass('d-none');
+            $('.received').each(function(){
+                $(this).val(0)
+            });
+        }else{
+            $('.received-product-qty').addClass('d-none');
+            $('.qty').each(function(){
+                rowindex = $(this).closest('tr').index();
+                $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('.received').val($(this).val());
+            });
+        }
+    });
 
 
 });
