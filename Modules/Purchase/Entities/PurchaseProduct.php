@@ -10,5 +10,6 @@ class PurchaseProduct extends BaseModel
     
     protected $fillable = ['purchase_id', 'product_id', 'qty', 'received', 'unit_id', 
     'net_unit_cost', 'discount', 'tax_rate', 'tax', 'total'];
+    
 
 }

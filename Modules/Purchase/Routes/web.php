@@ -15,7 +15,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('purchase', 'PurchaseController@index')->name('purchase');
     Route::group(['prefix' => 'purchase', 'as'=>'purchase.'], function () {
         Route::post('datatable-data', 'PurchaseController@get_datatable_data')->name('datatable.data');
-        Route::post('store-or-update', 'PurchaseController@store_or_update_data')->name('store.or.update');
+        Route::post('store', 'PurchaseController@store')->name('store');
+        Route::post('update', 'PurchaseController@update')->name('update');
         Route::get('add', 'PurchaseController@create')->name('add');
         Route::get('show', 'PurchaseController@show')->name('show');
         Route::get('edit', 'PurchaseController@edit')->name('edit');

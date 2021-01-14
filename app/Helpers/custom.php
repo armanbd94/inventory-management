@@ -3,6 +3,7 @@ define('LOGO_PATH','logo/');
 define('USER_AVATAR_PATH','user/');
 define('BRAND_IMAGE_PATH','brand/');
 define('PRODUCT_IMAGE_PATH','product/');
+define('PURCHASE_DOCUMENT_PATH','purchase-document/');
 define('DATE_FORMAT',date('d M, Y',));
 define('GENDER',['1'=>'Male','2'=>'Female']);
 define('TAX_METHOD',['1'=>'Exclusive','2'=>'Inclusive']);

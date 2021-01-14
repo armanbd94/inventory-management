@@ -48,6 +48,7 @@
                 <div class="dt-card__body">
 
                     <form id="purchase-form" method="POST" enctype="multipart/form-data">
+                    @csrf
                         <div class="row">
                             
                             <x-form.selectbox labelName="Warehouse" name="warehouse_id" required="required" col="col-md-6" class="selectpicker">
@@ -115,7 +116,7 @@
                                     </tfoot>
                                 </table>
                             </div>
-                            <x-form.selectbox labelName="Order Tax" name="order_tax" col="col-md-4" class="selectpicker">
+                            <x-form.selectbox labelName="Order Tax" name="order_tax_rate" col="col-md-4" class="selectpicker">
                                 <option value="0" selected>No Tax</option>
                                 @if (!$taxes->isEmpty())
                                     @foreach ($taxes as $tax)
@@ -139,7 +140,7 @@
                             <div class="col-md-12">
                                 <table class="table table-bordered">
                                     <thead class="bg-primary">
-                                        <th><strong>Items</strong><span class="float-right" id="items">0.00</span></th>
+                                        <th><strong>Items</strong><span class="float-right" id="item">0.00</span></th>
                                         <th><strong>Total</strong><span class="float-right" id="subtotal">0.00</span></th>
                                         <th><strong>Order Tax</strong><span class="float-right" id="order_total_tax">0.00</span></th>
                                         <th><strong>Order Discount</strong><span class="float-right" id="order_total_discount">0.00</span></th>
@@ -158,7 +159,7 @@
                                 <input type="hidden" name="grand_total">
                             </div>
                             <div class="form-group col-md-12 text-center">
-                                <button type="button" class="btn btn-danger btn-sm" id="save-btn">Reset</button>
+                                <button type="button" class="btn btn-danger btn-sm" id="reset-btn">Reset</button>
                                 <button type="button" class="btn btn-primary btn-sm" id="save-btn">Save</button>
                             </div>
                         </div>
@@ -485,6 +486,7 @@ $(document).ready(function(){
                     unit_operation_value.push(data.unit_operation_value);
                     rowindex = newRow.index();
                     calculateProductData(1);
+                    count++;
                 }
 
             }
@@ -603,7 +605,7 @@ $(document).ready(function(){
         var item = $('#product-list tbody tr:last').index();
         var total_qty = parseFloat($('#total-qty').text());
         var subtotal = parseFloat($('#total').text());
-        var order_tax = parseFloat($('select[name="order_tax"]').val());
+        var order_tax = parseFloat($('select[name="order_tax_rate"]').val());
         var order_discount = parseFloat($('#order_discount').val());
         var shipping_cost = parseFloat($('#shipping_cost').val());
 
@@ -635,7 +637,7 @@ $(document).ready(function(){
     $('input[name="shipping_cost"]').on('input',function(){
         calculateGrandTotal();
     });
-    $('select[name="order_tax"]').on('change',function(){
+    $('select[name="order_tax_rate"]').on('change',function(){
         calculateGrandTotal();
     });
 
@@ -658,6 +660,58 @@ $(document).ready(function(){
             $('.qty').each(function(){
                 rowindex = $(this).closest('tr').index();
                 $('#product-list tbody tr:nth-child('+(rowindex + 1)+')').find('.received').val($(this).val());
+            });
+        }
+    });
+
+    $(document).on('click','#save-btn', function(e){
+        e.preventDefault();
+
+        var rownumber = $('#product-list tbody tr:last').index();
+        if(rownumber < 0)
+        {
+            notification('error','Please add product to order table');
+        }else{
+            let form = document.getElementById('purchase-form');
+            let formData = new FormData(form);
+            $.ajax({
+                url: "{{route('purchase.store')}}",
+                type: "POST",
+                data: formData,
+                dataType: "JSON",
+                contentType: false,
+                processData: false,
+                cache: false,
+                beforeSend: function(){
+                    $('#save-btn').addClass('kt-spinner kt-spinner--md kt-spinner--light');
+                },
+                complete: function(){
+                    $('#save-btn').removeClass('kt-spinner kt-spinner--md kt-spinner--light');
+                },
+                success: function (data) {
+                    $('#purchase-form').find('.is-invalid').removeClass('is-invalid');
+                    $('#purchase-form').find('.error').remove();
+                    if (data.status == false) {
+                        $.each(data.errors, function (key, value) {
+                            var key = key.split('.').join('_');
+                            $('#purchase-form input#' + key).addClass('is-invalid');
+                            $('#purchase-form textarea#' + key).addClass('is-invalid');
+                            $('#purchase-form select#' + key).parent().addClass('is-invalid');
+                            $('#purchase-form #' + key).parent().append(
+                            '<small class="error text-danger">' + value + '</small>');
+                                                        
+                        });
+                    } else {
+                        notification(data.status, data.message);
+                        if (data.status == 'success') {
+                            window.location.replace('{{route("purchase")}}');
+                        }
+                    }
+
+                },
+                error: function (xhr, ajaxOption, thrownError) {
+                    console.log(thrownError + '\r\n' + xhr.statusText + '\r\n' + xhr.responseText);
+                }
             });
         }
     });
