@@ -18,11 +18,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('store', 'PurchaseController@store')->name('store');
         Route::post('update', 'PurchaseController@update')->name('update');
         Route::get('add', 'PurchaseController@create')->name('add');
-        Route::get('show', 'PurchaseController@show')->name('show');
-        Route::get('edit', 'PurchaseController@edit')->name('edit');
+        Route::get('details/{id}', 'PurchaseController@show')->name('show');
+        Route::get('edit/{id}', 'PurchaseController@edit')->name('edit');
         Route::post('delete', 'PurchaseController@delete')->name('delete');
         Route::post('bulk-delete', 'PurchaseController@bulk_delete')->name('bulk.delete');
-        Route::get('invoice', 'PurchaseController@invoice')->name('invoice');
+        Route::post('invoice', 'PurchaseController@invoice')->name('invoice');
         Route::post('payment/add', 'PurchasePaymentController@add')->name('payment.add');
         Route::post('payment/edit', 'PurchasePaymentController@edit')->name('payment.edit');
         Route::post('payment/view', 'PurchasePaymentController@view')->name('payment.view');

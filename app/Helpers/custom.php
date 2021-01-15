@@ -9,6 +9,16 @@ define('GENDER',['1'=>'Male','2'=>'Female']);
 define('TAX_METHOD',['1'=>'Exclusive','2'=>'Inclusive']);
 define('STATUS',['1'=>'Active','2'=>'Inactive']);
 define('PURCHASE_STATUS',['1'=>'Received','2'=>'Partial','3'=>'Pending','4'=>'Ordered']);
+define('PURCHASE_STATUS_LABEL',
+['1'=>'<span class="badge badge-success">Received</span>',
+'2'=>'<span class="badge badge-warning">Partial</span>',
+'3'=>'<span class="badge badge-danger">Pending</span>',
+'4'=>'<span class="badge badge-info">Ordered</span>',
+]);
+define('PAYMENT_STATUS',['1'=>'Paid','2'=>'Due']);
+define('PAYMENT_STATUS_LABEL',
+['1'=>'<span class="badge badge-success">Paid</span>',
+'2'=>'<span class="badge badge-danger">Due</span>']);
 define('DELETABLE',['1'=>'No','2'=>'Yes']);
 define('STATUS_LABEL',
 ['1'=>'<span class="badge badge-success">Active</span>',
@@ -37,7 +47,7 @@ if(!function_exists('permission')){
 if(!function_exists('action_button')){
     function action_button($action){
         return '<div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button class="btn btn-secondary dropdown-toggle d-flex align-items-center" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fas fa-th-list text-white"></i>
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
