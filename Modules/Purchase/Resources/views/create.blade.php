@@ -346,7 +346,7 @@ $(document).ready(function(){
             return;
         }
 
-        if(edit_qty < 0)
+        if(edit_qty < 1)
         {
             $('#edit_qty').val(1); 
             edit_qty = 1;
@@ -503,7 +503,7 @@ $(document).ready(function(){
         if(operator[0] == '*')
         {
             total_qty = purchase_qty * operation_value[0];
-        }else{
+        }else if(operator[0] == '/'){
             total_qty = purchase_qty / operation_value[0];
         }
 

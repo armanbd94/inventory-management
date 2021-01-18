@@ -227,4 +227,21 @@ class PurchaseController extends BaseController
             return response()->json($this->access_blocked());
         }
     }
+
+    public function edit(int $id)
+    {
+        if(permission('purchase-edit')){
+            $this->setPageData('Edit Purchase','Edit Purchase','fas fa-edit');
+            $data = [
+                'purchase'   => $this->model->with('purchase_products')->findOrFail($id),
+                'suppliers'  => Supplier::where('status',1)->get(),
+                'warehouses' => Warehouse::where('status',1)->get(),
+                'taxes'      => Tax::where('status',1)->get(),
+            ];
+            // dd($data['purchase']);
+            return view('purchase::edit',$data);
+        }else{
+            return $this->unauthorized_access_blocked();
+        }
+    }
 }
