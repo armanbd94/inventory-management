@@ -9,6 +9,7 @@ define('GENDER',['1'=>'Male','2'=>'Female']);
 define('TAX_METHOD',['1'=>'Exclusive','2'=>'Inclusive']);
 define('STATUS',['1'=>'Active','2'=>'Inactive']);
 define('PURCHASE_STATUS',['1'=>'Received','2'=>'Partial','3'=>'Pending','4'=>'Ordered']);
+define('PAYMENT_METHOD',['1'=>'Cash','2'=>'Cheque','3'=>'Mobile']);
 define('PURCHASE_STATUS_LABEL',
 ['1'=>'<span class="badge badge-success">Received</span>',
 '2'=>'<span class="badge badge-warning">Partial</span>',

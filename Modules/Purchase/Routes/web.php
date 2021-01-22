@@ -28,4 +28,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('payment/view', 'PurchasePaymentController@view')->name('payment.view');
         Route::post('payment/delete', 'PurchasePaymentController@delete')->name('payment.delete');
     });
+
+    //Purchase Payment Routes
+    Route::post('purchase-payment-store-or-update', 'PurchasePaymentController@store_or_update')->name('purchase.payment.store.or.update');
+    Route::post('purchase-payment/view', 'PurchasePaymentController@show')->name('purchase.payment.show');
+    Route::post('purchase-payment/edit', 'PurchasePaymentController@edit')->name('purchase.payment.edit');
+    Route::post('purchase-payment/delete', 'PurchasePaymentController@delete')->name('purchase.payment.delete');
 });

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Modules\System\Entities\Tax;
 use Modules\System\Entities\Unit;
 use Illuminate\Support\Facades\DB;
+use Modules\Account\Entities\Account;
 use Modules\Product\Entities\Product;
 use Modules\System\Entities\Warehouse;
 use Modules\Purchase\Entities\Purchase;
@@ -30,7 +31,8 @@ class PurchaseController extends BaseController
         if(permission('purchase-access')){
             $this->setPageData('Manage Purchase','Manage Purchase','fas fa-box');
             $suppliers=Supplier::all();
-            return view('purchase::index',compact('suppliers'));
+            $accounts = Account::where('status',1)->get();
+            return view('purchase::index',compact('suppliers','accounts'));
         }else{
             return $this->unauthorized_access_blocked();
         }
@@ -78,7 +80,12 @@ class PurchaseController extends BaseController
                         $action .= ' <a class="dropdown-item invoice_data"  data-id="' . $value->id . '"><i class="fas fa-file text-warning"></i> Invoicee</a>';
                     }
                     if(permission('purchase-payment-add')){
-                        $action .= ' <a class="dropdown-item invoice_data"  data-id="' . $value->id . '"><i class="fas fa-plus-square text-info"></i> Add Payment</a>';
+                        if(($value->grand_total - $value->paid_amount) != 0){
+                            $action .= ' <a class="dropdown-item add_payment"  data-id="' . $value->id . '" data-due="'.($value->grand_total - $value->paid_amount).'"><i class="fas fa-plus-square text-info"></i> Add Payment</a>';
+                        }
+                    }
+                    if(permission('purchase-payment-view')){
+                        $action .= ' <a class="dropdown-item view_payment_list"  data-id="' . $value->id . '"><i class="fas fa-file-invoice-dollar text-default"></i> Payment List</a>';
                     }
                     if(permission('purchase-delete')){
                         $action .= ' <a class="dropdown-item delete_data"  data-id="' . $value->id . '" data-name="' . $value->name . '"><i class="fas fa-trash text-danger"></i> Delete</a>';
@@ -244,4 +251,120 @@ class PurchaseController extends BaseController
             return $this->unauthorized_access_blocked();
         }
     }
+
+    public function update(PurchaseFormRequest $request)
+    {
+        if($request->ajax())
+        {
+            if(permission('purchase-edit'))
+            {
+                DB::beginTransaction();
+                try {
+                    $purchase_data = [
+                        'supplier_id'     => $request->supplier_id,
+                        'warehouse_id'    => $request->warehouse_id,
+                        'item'            => $request->item,
+                        'total_qty'       => $request->total_qty,
+                        'total_discount'  => $request->total_discount,
+                        'total_tax'       => $request->total_tax,
+                        'total_cost'      => $request->total_cost,
+                        'order_tax_rate'  => $request->order_tax_rate,
+                        'order_tax'       => $request->order_tax,
+                        'order_discount'  => $request->order_discount,
+                        'shipping_cost'   => $request->shipping_cost,
+                        'grand_total'     => $request->grand_total,
+                        'purchase_status' => $request->purchase_status,
+                        'payment_status'  => ($request->grand_total - $request->paid_amount) == 0 ? 1 : 2,
+                        'note'            => $request->note,
+                        'updated_by'      => auth()->user()->name
+                    ];
+            
+                    if($request->hasFile('document')){
+                        $purchase_data['document'] = $this->upload_file($request->file('document'),PURCHASE_DOCUMENT_PATH);
+                    }
+
+                    $purchaseData = Purchase::with('purchase_products')->find($request->purchase_id);
+                    $old_document = $purchaseData ? $purchaseData->document : '';
+                    if(!$purchaseData->purchase_products->isEmpty())
+                    {
+                        foreach ($purchaseData->purchase_products as  $purchase_product) {
+                            $old_received_qty = $purchase_product->pivot->received;
+                            $purchase_unit = Unit::find($purchase_product->pivot->unit_id);
+                            if($purchase_unit->operator == '*'){
+                                $old_received_qty = $old_received_qty * $purchase_unit->operation_value;
+                            }else{
+                                $old_received_qty = $old_received_qty / $purchase_unit->operation_value;
+                            }
+                            $product_data = Product::find($purchase_product->id);
+                            $product_data->qty -= $old_received_qty;
+                            $product_data->update();
+
+                            $warehouse_product = WarehouseProduct::where([
+                                'warehouse_id'=>$purchaseData->warehouse_id,
+                                'product_id'=>$purchase_product->id])->first();
+                            $warehouse_product->qty -= $old_received_qty;
+                            $warehouse_product->update();
+                        }
+                    }
+
+                    $products = [];
+                    if($request->has('products'))
+                    {
+                        foreach ($request->products as $key => $value) {
+                            $unit = Unit::where('unit_name',$value['unit'])->first();
+                            if($unit->operator == '*'){
+                                $qty = $value['received'] * $unit->operation_value;
+                            }else{
+                                $qty = $value['received'] / $unit->operation_value;
+                            }
+
+                            $products[$value['id']] = [
+                                'qty'           => $value['qty'],
+                                'received'      => $value['received'],
+                                'unit_id'       => $unit ? $unit->id : null,
+                                'net_unit_cost' => $value['net_unit_cost'],
+                                'discount'      => $value['discount'],
+                                'tax_rate'      => $value['tax_rate'],
+                                'tax'           => $value['tax'],
+                                'total'         => $value['subtotal']
+                            ];
+
+                            $product = Product::find($value['id']);
+                            $product->qty = $product->qty + $qty;
+                            $product->save();
+
+                            $warehouse_product = WarehouseProduct::where(['warehouse_id'=>$request->warehouse_id,'product_id'=>$value['id']])->first();
+                            if($warehouse_product){
+                                $warehouse_product->qty = $warehouse_product->qty + $qty;
+                                $warehouse_product->save();
+                            }else{
+                                WarehouseProduct::create([
+                                    'warehouse_id'=>$request->warehouse_id,
+                                    'product_id'=>$value['id'],
+                                    'qty' => $qty
+                                ]);
+                            }
+                        }
+                    }
+
+                    $purchase = $purchaseData->update($purchase_data);
+                    if($purchase && $old_document != '')
+                    {
+                        $this->delete_file($old_document,PURCHASE_DOCUMENT_PATH);
+                    }
+                    $purchaseData->purchase_products()->sync($products);
+                    $output = $purchase ? ['status' => 'success','message' => 'Data updated successfully'] : ['status' => 'error','message' => 'Data failed to update'];
+                    DB::commit();
+                } catch (Exception $e) {
+                    DB::rollBack();
+                    $output = ['status'=>'error','message'=>$e->getMessage()];
+                }
+                return response()->json($output);
+            }
+        }else{
+            return response()->json($this->access_blocked());
+        }
+    }
+
+
 }

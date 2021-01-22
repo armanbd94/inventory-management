@@ -83,10 +83,10 @@ class Purchase extends BaseModel
             $query->where('supplier_id', $this->supplier_id);
         }
         if (!empty($this->from_date)) {
-            $query->where('from_date', '>=',$this->from_date.' 00:00:00');
+            $query->where('created_at', '>=',$this->from_date.' 00:00:00');
         }
         if (!empty($this->to_date)) {
-            $query->where('to_date', '<=',$this->to_date.' 23:59:59');
+            $query->where('created_at', '<=',$this->to_date.' 23:59:59');
         }
         if (!empty($this->purchase_status)) {
             $query->where('purchase_status', $this->purchase_status);

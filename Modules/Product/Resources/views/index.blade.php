@@ -421,6 +421,7 @@ $(document).ready(function(){
             });
         }
     });
+    
 
     $(document).on('click', '.delete_data', function () {
         let id    = $(this).data('id');

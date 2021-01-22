@@ -31,7 +31,7 @@ class GeneralSettingFormRequest extends FormRequest
             'currency_symbol'     => 'required|string',
             'currency_position' => 'required|string',
             'timezone'          => 'string',
-            'date_formate'      => 'string',
+            'date_format'       => 'string',
             'invoice_prefix'    => 'required|string',
             'invoice_number'    => 'required|string',
             'logo'              => 'nullable|image|mimes:png,jpg,jpeg,svg',

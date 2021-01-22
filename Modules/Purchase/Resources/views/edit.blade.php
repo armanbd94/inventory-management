@@ -50,6 +50,7 @@
                     <form id="purchase-form" method="POST" enctype="multipart/form-data">
                     @csrf
                         <div class="row">
+                            <input type="hidden" name="purchase_id" value="{{ $purchase->id }}">
                             <input type="hidden" name="warehouse_id_hidden" value="{{ $purchase->warehouse_id }}">
                             <input type="hidden" name="supplier_id_hidden" value="{{ $purchase->supplier_id }}">
                             <input type="hidden" name="purchase_status_hidden" value="{{ $purchase->purchase_status }}">
@@ -246,7 +247,7 @@
                             </div>
                             <div class="form-group col-md-12 text-center">
                                 <button type="button" class="btn btn-danger btn-sm" id="reset-btn">Reset</button>
-                                <button type="button" class="btn btn-primary btn-sm" id="save-btn">Save</button>
+                                <button type="button" class="btn btn-primary btn-sm" id="save-btn">Update</button>
                             </div>
                         </div>
                     </form>
@@ -811,7 +812,7 @@ $(document).ready(function(){
             let form = document.getElementById('purchase-form');
             let formData = new FormData(form);
             $.ajax({
-                url: "{{route('purchase.store')}}",
+                url: "{{route('purchase.update')}}",
                 type: "POST",
                 data: formData,
                 dataType: "JSON",
