@@ -2,6 +2,7 @@
 
 namespace Modules\Purchase\Entities;
 
+use Modules\Account\Entities\Payment;
 use Modules\Base\Entities\BaseModel;
 use Modules\Product\Entities\Product;
 use Modules\Supplier\Entities\Supplier;
@@ -25,6 +26,11 @@ class Purchase extends BaseModel
                     ->withPivot(['qty', 'received', 'unit_id', 
                     'net_unit_cost', 'discount', 'tax_rate', 'tax', 'total'])
                     ->withTimestamps();
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class,);
     }
 
     protected $purchase_no;

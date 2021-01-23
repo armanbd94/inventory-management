@@ -15,6 +15,7 @@ use Modules\Purchase\Entities\Purchase;
 use Modules\Supplier\Entities\Supplier;
 use Modules\Base\Http\Controllers\BaseController;
 use Modules\Product\Entities\WarehouseProduct;
+use Modules\Purchase\Entities\PurchaseProduct;
 use Modules\Purchase\Http\Requests\PurchaseFormRequest;
 
 class PurchaseController extends BaseController
@@ -361,6 +362,111 @@ class PurchaseController extends BaseController
                 }
                 return response()->json($output);
             }
+        }else{
+            return response()->json($this->access_blocked());
+        }
+    }
+
+
+    public function delete(Request $request)
+    {
+        if($request->ajax()){
+            if(permission('purchase-delete')){
+                DB::beginTransaction();
+                try {
+                    $purchaseData = Purchase::with('purchase_products','payments')->find($request->id);
+                    if(!$purchaseData->purchase_products->isEmpty())
+                    {
+                        foreach ($purchaseData->purchase_products as  $purchase_product) {
+                            $purchase_unit = Unit::find($purchase_product->pivot->unit_id);
+                            if($purchase_unit->operator == '*'){
+                                $received_qty = $purchase_product->pivot->received * $purchase_unit->operation_value;
+                            }else{
+                                $received_qty = $purchase_product->pivot->received / $purchase_unit->operation_value;
+                            }
+                            $product_data = Product::find($purchase_product->id);
+                            $product_data->qty -= $received_qty;
+                            $product_data->update();
+
+                            $warehouse_product = WarehouseProduct::where([
+                                'warehouse_id'=>$purchaseData->warehouse_id,
+                                'product_id'=>$purchase_product->id])->first();
+                            $warehouse_product->qty -= $received_qty;
+                            $warehouse_product->update();
+                        }
+                    }
+                    if(!$purchaseData->purchase_products->isEmpty()){
+                        $purchaseData->purchase_products()->detach();
+                    }
+                    if(!$purchaseData->payments->isEMpty()){
+                        $purchaseData->payments()->delete();
+                    }
+                    
+                    $result = $purchaseData->delete();
+                    $output = $result ? ['status' => 'success','message' => 'Data has been deleted successfully'] : ['status' => 'error','message' => 'failed to delete data'];
+                    DB::commit();
+                } catch (Exception $e) {
+                    DB::rollBack();
+                    $output = ['status'=>'error','message'=>$e->getMessage()];
+                }
+                return response()->json($output);
+            }else{
+                $output = $this->access_blocked();
+            }
+            return response()->json($output);
+        }else{
+            return response()->json($this->access_blocked());
+        }
+    }
+
+    public function bulk_delete(Request $request)
+    {
+        if($request->ajax()){
+            if(permission('purchase-bulk-delete')){
+                foreach ($request->ids as $id) {
+                    DB::beginTransaction();
+                    try {
+                        $purchaseData = Purchase::with('purchase_products','payments')->find($id);
+                        $old_document = $purchaseData ? $purchaseData->document : '';
+                        if(!$purchaseData->purchase_products->isEmpty())
+                        {
+                            foreach ($purchaseData->purchase_products as  $purchase_product) {
+                                $purchase_unit = Unit::find($purchase_product->pivot->unit_id);
+                                if($purchase_unit->operator == '*'){
+                                    $received_qty = $purchase_product->pivot->received * $purchase_unit->operation_value;
+                                }else{
+                                    $received_qty = $purchase_product->pivot->received / $purchase_unit->operation_value;
+                                }
+                                $product_data = Product::find($purchase_product->id);
+                                $product_data->qty -= $received_qty;
+                                $product_data->update();
+    
+                                $warehouse_product = WarehouseProduct::where([
+                                    'warehouse_id'=>$purchaseData->warehouse_id,
+                                    'product_id'=>$purchase_product->id])->first();
+                                $warehouse_product->qty -= $received_qty;
+                                $warehouse_product->update();
+                            }
+                        }
+                        if(!$purchaseData->purchase_products->isEmpty()){
+                            $purchaseData->purchase_products()->detach();
+                        }
+                        if(!$purchaseData->payments->isEMpty()){
+                            $purchaseData->payments()->delete();
+                        }
+                        $result = $purchaseData->delete();
+                        $output = $result ? ['status' => 'success','message' => 'Data has been deleted successfully'] : ['status' => 'error','message' => 'failed to delete data'];
+                        DB::commit();
+                    } catch (Exception $e) {
+                        DB::rollBack();
+                        $output = ['status'=>'error','message'=>$e->getMessage()];
+                    }
+                    return response()->json($output);
+                }
+            }else{
+                $output = $this->access_blocked();
+            }
+            return response()->json($output);
         }else{
             return response()->json($this->access_blocked());
         }
