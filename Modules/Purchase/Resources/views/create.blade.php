@@ -417,7 +417,7 @@ $(document).ready(function(){
         $.ajax({
             url: "{{ url('product-search') }}",
             type:"POST",
-            data:{data:data,_token:_token},
+            data:{data:data,_token:_token,type:'purchase'},
             success: function(data)
             {
                 var flag = 1;

@@ -50,7 +50,7 @@
                     <form id="form-filter">
                         <div class="row">
                             <div class="form-group col-md-3">
-                                <label for="purchase_no">Product No</label>
+                                <label for="purchase_no">Purchase No</label>
                                 <input type="text" class="form-control" name="purchase_no" id="purchase_no" placeholder="Enter purchase no">
                             </div>
                             <x-form.selectbox labelName="Supplier" name="supplier_id" col="col-md-3" class="selectpicker">
@@ -520,15 +520,15 @@ $(document).ready(function(){
     });
     $(document).on('keyup', '#amount', function () {
         
-        var amount = $(this).val();
-        var paying_amount = $('#paying_amount').val();
+        var amount = parseFloat($(this).val());
+        var paying_amount = parseFloat($('#paying_amount').val());
         var change_amount = paying_amount - amount;
         if(amount > paying_amount){
             notification('error','Paying amount cannot be bigger than received amount');
         }
         if($('#payment_id').val() == '')
         {
-            var balance = $('#balance').val();
+            var balance = parseFloat($('#balance').val());
             if(amount > balance){
                 notification('error','Paying amount cannot be bigger than due amount');
             }

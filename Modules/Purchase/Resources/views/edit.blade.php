@@ -195,9 +195,9 @@
                                         <th id="total-qty" class="text-center">{{ $purchase->total_qty }}</th>
                                         <th class="d-none received-product-qty"></th>
                                         <th></th>
-                                        <th id="total-discount" class="text-right">{{ number_format($purchase->total_discount,2,',','') }}</th>
-                                        <th id="total-tax" class="text-right">{{ number_format($purchase->total_tax,2,',','') }}</th>
-                                        <th id="total" class="text-right">{{ number_format($purchase->total_cost,2,',','') }}</th>
+                                        <th id="total-discount" class="text-right">{{ number_format($purchase->total_discount,2,'.',',') }}</th>
+                                        <th id="total-tax" class="text-right">{{ number_format($purchase->total_tax,2,'.',',') }}</th>
+                                        <th id="total" class="text-right">{{ number_format($purchase->total_cost,2,'.',',') }}</th>
                                         <th></th>
                                     </tfoot>
                                 </table>
@@ -430,7 +430,7 @@ $(document).ready(function(){
     {
         $('input[name="shipping_cost"]').val('0.00');
     }
-    $('#shipping_cost').text(parseFloat($('input[name="shipping_cost"]').val()).toFixed(2));
+    $('#shipping_total_cost').text(parseFloat($('input[name="shipping_cost"]').val()).toFixed(2));
     $('#grand_total').text(parseFloat($('input[name="grand_total"]').val()).toFixed(2));
 
 
@@ -554,7 +554,7 @@ $(document).ready(function(){
         $.ajax({
             url: "{{ url('product-search') }}",
             type:"POST",
-            data:{data:data,_token:_token},
+            data:{data:data,_token:_token,type:'purchase'},
             success: function(data)
             {
                 var flag = 1;
