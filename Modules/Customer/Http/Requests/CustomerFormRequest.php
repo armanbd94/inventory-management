@@ -24,6 +24,7 @@ class CustomerFormRequest extends FormRequest
         $rules['state']        = ['nullable','string'];
         $rules['postal_code']  = ['nullable','string'];
         $rules['country']      = ['nullable','string'];
+        $rules['image']      = ['nullable','image'];
 
         if(request()->update_id){
             $rules['phone'][2] = 'unique:suppliers,phone,'.request()->update_id;

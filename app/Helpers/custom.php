@@ -1,6 +1,7 @@
 <?php 
 define('LOGO_PATH','logo/');
 define('USER_AVATAR_PATH','user/');
+define('EMPLOYEE_IMAGE_PATH','employee/');
 define('BRAND_IMAGE_PATH','brand/');
 define('PRODUCT_IMAGE_PATH','product/');
 define('PURCHASE_DOCUMENT_PATH','purchase-document/');
