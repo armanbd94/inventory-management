@@ -32,7 +32,7 @@ class CreateSalesTable extends Migration
             $table->double('grand_total');
             $table->double('paid_amount');
             $table->enum('sale_status',['1','2'])->comment="1=Completed,2=Pending";
-            $table->enum('payment_status',['1','2'])->comment="1=Paid,2=Due";
+            $table->enum('payment_status',['1','2','3'])->comment="1=Paid,2=Partial,3=Due";
             $table->string('document')->nullable();
             $table->text('note')->nullable();
             $table->enum('status',['1','2'])->default('1')->comment="1=Active,2=Inactive";

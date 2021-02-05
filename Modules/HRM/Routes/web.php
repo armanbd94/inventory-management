@@ -39,5 +39,15 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('change-status', 'EmployeeController@change_status')->name('change.status');
     });
 
+    //Attendance Routes
+    Route::get('attendance', 'AttendanceController@index')->name('attendance');
+    Route::group(['prefix' => 'attendance', 'as'=>'attendance.'], function () {
+        Route::post('datatable-data', 'AttendanceController@get_datatable_data')->name('datatable.data');
+        Route::post('store-or-update', 'AttendanceController@store_or_update_data')->name('store.or.update');
+        Route::post('edit', 'AttendanceController@edit')->name('edit');
+        Route::post('delete', 'AttendanceController@delete')->name('delete');
+        Route::post('bulk-delete', 'AttendanceController@bulk_delete')->name('bulk.delete');
+        Route::post('change-status', 'AttendanceController@change_status')->name('change.status');
+    });
 
 });

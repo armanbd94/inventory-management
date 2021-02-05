@@ -23,6 +23,10 @@ define('SALE_STATUS_LABEL',
 ['1'=>'<span class="badge badge-success">Completed</span>',
 '2'=>'<span class="badge badge-danger">Pending</span>',
 ]);
+define('ATTENDANCE_STATUS_LABEL',
+['1'=>'<span class="badge badge-success">Present</span>',
+'2'=>'<span class="badge badge-danger">Late</span>',
+]);
 define('PAYMENT_STATUS',['1'=>'Paid','2'=>'Due']);
 define('PAYMENT_STATUS_LABEL',
 ['1'=>'<span class="badge badge-success">Paid</span>',
