@@ -50,4 +50,15 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('change-status', 'AttendanceController@change_status')->name('change.status');
     });
 
+    //Payroll Routes
+    Route::get('payroll', 'PayrollController@index')->name('payroll');
+    Route::group(['prefix' => 'payroll', 'as'=>'payroll.'], function () {
+        Route::post('datatable-data', 'PayrollController@get_datatable_data')->name('datatable.data');
+        Route::post('store-or-update', 'PayrollController@store_or_update_data')->name('store.or.update');
+        Route::post('edit', 'PayrollController@edit')->name('edit');
+        Route::post('delete', 'PayrollController@delete')->name('delete');
+        Route::post('bulk-delete', 'PayrollController@bulk_delete')->name('bulk.delete');
+        Route::post('change-status', 'PayrollController@change_status')->name('change.status');
+    });
+
 });

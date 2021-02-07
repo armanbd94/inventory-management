@@ -13,6 +13,7 @@ define('STATUS',['1'=>'Active','2'=>'Inactive']);
 define('PURCHASE_STATUS',['1'=>'Received','2'=>'Partial','3'=>'Pending','4'=>'Ordered']);
 define('SALE_STATUS',['1'=>'Completed','2'=>'Pending']);
 define('PAYMENT_METHOD',['1'=>'Cash','2'=>'Cheque','3'=>'Mobile']);
+define('PAYROLL_PAYMENT_METHOD',['1'=>'Cash','2'=>'Bank','3'=>'Mobile']);
 define('PURCHASE_STATUS_LABEL',
 ['1'=>'<span class="badge badge-success">Received</span>',
 '2'=>'<span class="badge badge-warning">Partial</span>',
@@ -36,6 +37,7 @@ define('SALE_PAYMENT_STATUS_LABEL',
 '2'=>'<span class="badge badge-info">Partial</span>',
 '3'=>'<span class="badge badge-danger">Due</span>',
 ]);
+
 define('DELETABLE',['1'=>'No','2'=>'Yes']);
 define('STATUS_LABEL',
 ['1'=>'<span class="badge badge-success">Active</span>',
