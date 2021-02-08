@@ -4,8 +4,11 @@ namespace Modules\Account\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Modules\Account\Entities\Account;
+use Modules\Account\Entities\Payment;
 use Modules\Base\Http\Controllers\BaseController;
 use Modules\Account\Http\Requests\AccountFormRequest;
+use Modules\Expense\Entities\Expense;
+use Modules\HRM\Entities\Payroll;
 
 class AccountController extends BaseController
 {
@@ -153,6 +156,30 @@ class AccountController extends BaseController
             return response()->json($output);
         }else{
             return response()->json($this->access_blocked());
+        }
+    }
+
+    public function balance_sheet()
+    {
+        if(permission('balance-sheet-access')){
+            $this->setPageData('Balance Sheet','Balance Sheet','fas fa-file-invoice-dollar');
+            $accounts = $this->model->where('status',1)->get();
+            $debit = [];
+            $credit = [];
+            if(!$accounts->isEmpty())
+            {
+                foreach ($accounts as $account) {
+                    $payment_received = Payment::whereNotNull('sale_id')->where('account_id',$account->id)->sum('amount');
+                    $payment_paid     = Payment::whereNotNull('purchase_id')->where('account_id',$account->id)->sum('amount');
+                    $expenses         = Expense::where('account_id',$account->id)->sum('amount');
+                    $payrolls         = Payroll::where('account_id',$account->id)->sum('amount');
+                    $credit[]           = $payment_received + $account->inital_balance;
+                    $debit[]            = $payment_paid + $expenses + $payrolls;
+                }
+            }
+            return view('account::balance-sheet',compact('accounts','debit','credit'));
+        }else{
+            return $this->unauthorized_access_blocked();
         }
     }
 }
