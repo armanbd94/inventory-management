@@ -5,7 +5,7 @@
 @endsection
 
 @push('stylesheet')
-    
+<link rel="stylesheet" href="daterange/css/daterangepicker.min.css">
 @endpush
 
 @section('content')
@@ -48,6 +48,14 @@
 
                     <form id="form-filter">
                         <div class="row">
+                            <div class="input-group col-md-6">
+                                <input type="text" class="daterangepicker-field form-control" required />
+                                <input type="hidden" name="start_date"  />
+                                <input type="hidden" name="end_date" />
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="submit">Search</button>
+                                </div>
+                            </div>
                             <div class="form-group col-md-4">
                                 <label for="account_no">Account No</label>
                                 <input type="text" class="form-control" name="account_no" id="account_no" placeholder="Enter account no">
@@ -108,9 +116,23 @@
 @endsection
 
 @push('script')
+<script src="js/moment.min.js"></script>
+<script src="daterange/js/knockout-3.4.2.js"></script>
+<script src="daterange/js/daterangepicker.min.js"></script>
 <script>
 var table;
 $(document).ready(function(){
+
+    $(".daterangepicker-field").daterangepicker({
+	  callback: function(startDate, endDate, period){
+	    var start_date = startDate.format('YYYY-MM-DD');
+	    var end_date = endDate.format('YYYY-MM-DD');
+	    var title = start_date + ' To ' + end_date;
+	    $(this).val(title);
+	    $('input[name="start_date"]').val(start_date);
+	    $('input[name="end_date"]').val(end_date);
+	  }
+	});
 
     table = $('#dataTable').DataTable({
         "processing": true, //Feature control the processing indicator
