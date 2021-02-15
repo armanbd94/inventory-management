@@ -46,7 +46,7 @@
                                 <div class="input-group">
                                     <input type="text" class="form-control daterangepicker-filed" value="{{ date('Y-m-').'-01' }} To {{ date('Y-m-d') }}">
                                     <input type="hidden" name="start_date" value="{{ date('Y-m-').'-01' }}">
-                                    <input type="hidden" name="end_date" value="{{ date('Y-m-').'-01' }}">
+                                    <input type="hidden" name="end_date" value="{{ date('Y-m-d') }}">
                                 </div>
                             </div>
                             <div class="form-group col-md-1" style="padding-top: 20px;">

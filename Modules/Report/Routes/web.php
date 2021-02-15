@@ -16,4 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => ['auth']], function () {
     Route::get('summary-report', 'SummaryReportController@index')->name('summary.report');
     Route::post('summary-report/details', 'SummaryReportController@report')->name('summary.report.details');
+    
+    Route::match(['get', 'post'], 'product-report', 'ProductReportController@index');
 });
