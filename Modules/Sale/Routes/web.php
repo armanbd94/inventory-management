@@ -25,7 +25,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('edit/{id}', 'SaleController@edit')->name('edit');
         Route::post('delete', 'SaleController@delete')->name('delete');
         Route::post('bulk-delete', 'SaleController@bulk_delete')->name('bulk.delete');
-        Route::post('invoice', 'SaleController@invoice')->name('invoice');
     });
 
     //Sale Payment Routes

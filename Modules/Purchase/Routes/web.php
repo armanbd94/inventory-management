@@ -22,7 +22,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('edit/{id}', 'PurchaseController@edit')->name('edit');
         Route::post('delete', 'PurchaseController@delete')->name('delete');
         Route::post('bulk-delete', 'PurchaseController@bulk_delete')->name('bulk.delete');
-        Route::post('invoice', 'PurchaseController@invoice')->name('invoice');
     });
 
     //Purchase Payment Routes

@@ -348,15 +348,15 @@ html {
                                         <td width="50%">
                                             <div class="invoice-to">
                                                 <div class="text-grey-light">INVOICE TO:</div>
-                                                <div class="to">{{ $purchase->supplier->name }}</div>
-                                                <div class="phone">{{ $purchase->supplier->phone }}</div>
-                                                @if($purchase->supplier->email)<div class="email">{{ $purchase->supplier->email }}</div>@endif
-                                                @if($purchase->supplier->address)<div class="address">{{ $purchase->supplier->address }}</div>@endif
+                                                <div class="to">{{ $sale->customer->name }}</div>
+                                                <div class="phone">{{ $sale->customer->phone }}</div>
+                                                @if($sale->customer->email)<div class="email">{{ $sale->customer->email }}</div>@endif
+                                                @if($sale->customer->address)<div class="address">{{ $sale->customer->address }}</div>@endif
                                             </div>
                                         </td>
                                         <td width="50%" class="text-right">
-                                            <h4 class="name m-0">{{ $purchase->purchase_no }}</h4>
-                                            <div class="m-0 date">Date:{{ date('d-M-Y',strtotime($purchase->created_at)) }}</div>
+                                            <h4 class="name m-0">{{ $sale->sale_no }}</h4>
+                                            <div class="m-0 date">Date:{{ date('d-M-Y',strtotime($sale->created_at)) }}</div>
                                         </td>
                                     </tr>
                                 </table>
@@ -373,16 +373,16 @@ html {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (!$purchase->purchase_products->isEmpty())
-                                            @foreach ($purchase->purchase_products as $key => $purchase_product)
+                                        @if (!$sale->sale_products->isEmpty())
+                                            @foreach ($sale->sale_products as $key => $sale_product)
                                                 <tr>
                                                     <td class="text-center no">{{ $key+1 }}</td>
-                                                    <td class="text-left">{{ $purchase_product->name }}</td>
-                                                    <td class="text-center qty">{{ $purchase_product->pivot->qty.' '.DB::table('units')->where('id',$purchase_product->pivot->unit_id)->value('unit_name') }}</td>
-                                                    <td class="text-right price">{{ number_format($purchase_product->pivot->net_unit_cost,2) }}</td>
-                                                    <td class="text-right discount">{{ number_format($purchase_product->pivot->discount,2) }}</td>
-                                                    <td class="text-right tax">{{ number_format($purchase_product->pivot->tax,2) }}</td>
-                                                    <td class="text-right total">{{ number_format($purchase_product->pivot->total,2) }}</td>
+                                                    <td class="text-left">{{ $sale_product->name }}</td>
+                                                    <td class="text-center qty">{{ $sale_product->pivot->qty.' '.DB::table('units')->where('id',$sale_product->pivot->sale_unit_id)->value('unit_name') }}</td>
+                                                    <td class="text-right price">{{ number_format($sale_product->pivot->net_unit_price,2) }}</td>
+                                                    <td class="text-right discount">{{ number_format($sale_product->pivot->discount,2) }}</td>
+                                                    <td class="text-right tax">{{ number_format($sale_product->pivot->tax,2) }}</td>
+                                                    <td class="text-right total">{{ number_format($sale_product->pivot->total,2) }}</td>
                                                 </tr>
                                             @endforeach
                                         @endif
@@ -393,9 +393,9 @@ html {
                                             <td colspan="2"  class="text-right">TOTAL</td>
                                             <td class="text-right">
                                                 @if (config('settings.currency_position') == 'suffix')
-                                                    {{ number_format($purchase->total_price,2) }} {{ config('settings.currency_symbol') }}
+                                                    {{ number_format($sale->total_price,2) }} {{ config('settings.currency_symbol') }}
                                                 @else 
-                                                    {{ config('settings.currency_symbol') }} {{ number_format($purchase->total_price,2) }}
+                                                    {{ config('settings.currency_symbol') }} {{ number_format($sale->total_price,2) }}
                                                 @endif
                                             </td>
                                         </tr>
@@ -404,20 +404,20 @@ html {
                                             <td colspan="2"  class="text-right">DISCOUNT</td>
                                             <td class="text-right">
                                                 @if (config('settings.currency_position') == 'suffix')
-                                                    {{ number_format($purchase->total_discount,2) }} {{ config('settings.currency_symbol') }}
+                                                    {{ number_format($sale->total_discount,2) }} {{ config('settings.currency_symbol') }}
                                                 @else 
-                                                    {{ config('settings.currency_symbol') }} {{ number_format($purchase->total_price,2) }}
+                                                    {{ config('settings.currency_symbol') }} {{ number_format($sale->total_price,2) }}
                                                 @endif
                                             </td>
                                         </tr>
                                         <tr>
                                             <td colspan="4"></td>
-                                            <td colspan="2"  class="text-right">TAX {{ $purchase->order_tax_rate }}%</td>
+                                            <td colspan="2"  class="text-right">TAX {{ $sale->order_tax_rate }}%</td>
                                             <td class="text-right">
                                                 @if (config('settings.currency_position') == 'suffix')
-                                                    {{ number_format($purchase->order_tax_rate,2) }} {{ config('settings.currency_symbol') }}
+                                                    {{ number_format($sale->order_tax_rate,2) }} {{ config('settings.currency_symbol') }}
                                                 @else 
-                                                    {{ config('settings.currency_symbol') }} {{ number_format($purchase->total_price,2) }}
+                                                    {{ config('settings.currency_symbol') }} {{ number_format($sale->total_price,2) }}
                                                 @endif
                                             </td>
                                         </tr>
@@ -426,9 +426,9 @@ html {
                                             <td colspan="2"  class="text-right">SHIPPING COST</td>
                                             <td class="text-right">
                                                 @if (config('settings.currency_position') == 'suffix')
-                                                    {{ number_format($purchase->shipping_cost,2) }} {{ config('settings.currency_symbol') }}
+                                                    {{ number_format($sale->shipping_cost,2) }} {{ config('settings.currency_symbol') }}
                                                 @else 
-                                                    {{ config('settings.currency_symbol') }} {{ number_format($purchase->total_price,2) }}
+                                                    {{ config('settings.currency_symbol') }} {{ number_format($sale->total_price,2) }}
                                                 @endif
                                             </td>
                                         </tr>
@@ -437,9 +437,9 @@ html {
                                             <td colspan="2"  class="text-right">GRAND TOTAL</td>
                                             <td class="text-right">
                                                 @if (config('settings.currency_position') == 'suffix')
-                                                    {{ number_format($purchase->grand_total,2) }} {{ config('settings.currency_symbol') }}
+                                                    {{ number_format($sale->grand_total,2) }} {{ config('settings.currency_symbol') }}
                                                 @else 
-                                                    {{ config('settings.currency_symbol') }} {{ number_format($purchase->total_price,2) }}
+                                                    {{ config('settings.currency_symbol') }} {{ number_format($sale->total_price,2) }}
                                                 @endif
                                             </td>
                                         </tr>
@@ -448,9 +448,9 @@ html {
                                             <td colspan="2"  class="text-right">PAID AMOUNT</td>
                                             <td class="text-right">
                                                 @if (config('settings.currency_position') == 'suffix')
-                                                    {{ number_format($purchase->paid_amount,2) }} {{ config('settings.currency_symbol') }}
+                                                    {{ number_format($sale->paid_amount,2) }} {{ config('settings.currency_symbol') }}
                                                 @else 
-                                                    {{ config('settings.currency_symbol') }} {{ number_format($purchase->total_price,2) }}
+                                                    {{ config('settings.currency_symbol') }} {{ number_format($sale->total_price,2) }}
                                                 @endif
                                             </td>
                                         </tr>
@@ -459,9 +459,9 @@ html {
                                             <td colspan="2"  class="text-right">DUE AMOUNT</td>
                                             <td class="text-right">
                                                 @if (config('settings.currency_position') == 'suffix')
-                                                    {{ number_format(($purchase->grand_total - $purchase->paid_amount),2) }} {{ config('settings.currency_symbol') }}
+                                                    {{ number_format(($sale->grand_total - $sale->paid_amount),2) }} {{ config('settings.currency_symbol') }}
                                                 @else 
-                                                    {{ config('settings.currency_symbol') }} {{ number_format($purchase->total_price,2) }}
+                                                    {{ config('settings.currency_symbol') }} {{ number_format($sale->total_price,2) }}
                                                 @endif
                                             </td>
                                         </tr>
@@ -473,7 +473,7 @@ html {
                                             <div class="thanks">Thank you!</div>
                                             <div class="notices">
                                                 <div>NOTE:</div>
-                                                <div class="notice">{{ $purchase->note }}</div>
+                                                <div class="notice">{{ $sale->note }}</div>
                                             </div>
                                         </td>
                                     </tr>
