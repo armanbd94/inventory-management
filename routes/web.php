@@ -21,6 +21,9 @@ Auth::routes(['register'=>false]);
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/', 'HomeController@index');
     Route::get('unauthorized', 'HomeController@unauthorized')->name('unauthorized');
+    Route::get('my-profile', 'MyProfileController@index')->name('my.profile');
+    Route::post('update-profile', 'MyProfileController@updateProfile')->name('update.profile');
+    Route::post('update-password', 'MyProfileController@updatePassword')->name('update.password');
 
     //Menu Routes
     Route::get('menu', 'MenuController@index')->name('menu');

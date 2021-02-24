@@ -41,7 +41,7 @@
                     <div class="row">
                       <div class="col-md-12">
                         <div class="form-group col-md-12">
-                            <label for="image">Product Image</label>
+                            <label for="image">Employee Image</label>
                             <div class="col-md-12 px-0 text-center">
                                 <div id="image">
   
