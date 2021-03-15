@@ -64,7 +64,7 @@ class BaseController extends Controller
         return ['status'=>'error','message'=> 'Unauthorized access blocked'];
     }
     
-    protected function track_data($update_id=null,$collection){
+    protected function track_data($collection,$update_id=null){
         $created_by = $updated_by = auth()->user()->name;
         $created_at = $updated_at = Carbon::now();
         return $update_id ? $collection->merge(compact('updated_by','updated_at')) 
