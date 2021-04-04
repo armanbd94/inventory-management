@@ -70,7 +70,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     //HRM Setting Routes
-    Route::get('hrm-setting', 'HRMSettingCOntroller@index');
-    Route::post('hrm-setting/store', 'HRMSettingCOntroller@store');
+    Route::get('hrm-setting', 'HRMSettingController@index');
+    Route::post('hrm-setting/store', 'HRMSettingController@store');
 
 });
