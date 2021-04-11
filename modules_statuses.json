@@ -10,5 +10,6 @@
     "Expense": true,
     "Sale": true,
     "HRM": true,
-    "Report": true
+    "Report": true,
+    "Stock": true
 }

@@ -387,6 +387,7 @@ html {
                                             @endforeach
                                         @endif
                                     </tbody>
+
                                     <tfoot>
                                         <tr>
                                             <td colspan="4"></td>
@@ -406,7 +407,7 @@ html {
                                                 @if (config('settings.currency_position') == 'suffix')
                                                     {{ number_format($purchase->total_discount,2) }} {{ config('settings.currency_symbol') }}
                                                 @else 
-                                                    {{ config('settings.currency_symbol') }} {{ number_format($purchase->total_price,2) }}
+                                                    {{ config('settings.currency_symbol') }} {{ number_format($purchase->total_discount,2) }}
                                                 @endif
                                             </td>
                                         </tr>
@@ -417,7 +418,7 @@ html {
                                                 @if (config('settings.currency_position') == 'suffix')
                                                     {{ number_format($purchase->order_tax_rate,2) }} {{ config('settings.currency_symbol') }}
                                                 @else 
-                                                    {{ config('settings.currency_symbol') }} {{ number_format($purchase->total_price,2) }}
+                                                    {{ config('settings.currency_symbol') }} {{ number_format($purchase->order_tax_rate,2) }}
                                                 @endif
                                             </td>
                                         </tr>
@@ -428,7 +429,7 @@ html {
                                                 @if (config('settings.currency_position') == 'suffix')
                                                     {{ number_format($purchase->shipping_cost,2) }} {{ config('settings.currency_symbol') }}
                                                 @else 
-                                                    {{ config('settings.currency_symbol') }} {{ number_format($purchase->total_price,2) }}
+                                                    {{ config('settings.currency_symbol') }} {{ number_format($purchase->shipping_cost,2) }}
                                                 @endif
                                             </td>
                                         </tr>
@@ -439,7 +440,7 @@ html {
                                                 @if (config('settings.currency_position') == 'suffix')
                                                     {{ number_format($purchase->grand_total,2) }} {{ config('settings.currency_symbol') }}
                                                 @else 
-                                                    {{ config('settings.currency_symbol') }} {{ number_format($purchase->total_price,2) }}
+                                                    {{ config('settings.currency_symbol') }} {{ number_format($purchase->grand_total,2) }}
                                                 @endif
                                             </td>
                                         </tr>
@@ -450,7 +451,7 @@ html {
                                                 @if (config('settings.currency_position') == 'suffix')
                                                     {{ number_format($purchase->paid_amount,2) }} {{ config('settings.currency_symbol') }}
                                                 @else 
-                                                    {{ config('settings.currency_symbol') }} {{ number_format($purchase->total_price,2) }}
+                                                    {{ config('settings.currency_symbol') }} {{ number_format($purchase->paid_amount,2) }}
                                                 @endif
                                             </td>
                                         </tr>
@@ -461,7 +462,7 @@ html {
                                                 @if (config('settings.currency_position') == 'suffix')
                                                     {{ number_format(($purchase->grand_total - $purchase->paid_amount),2) }} {{ config('settings.currency_symbol') }}
                                                 @else 
-                                                    {{ config('settings.currency_symbol') }} {{ number_format($purchase->total_price,2) }}
+                                                    {{ config('settings.currency_symbol') }} {{ number_format(($purchase->grand_total - $purchase->paid_amount),2) }}
                                                 @endif
                                             </td>
                                         </tr>
