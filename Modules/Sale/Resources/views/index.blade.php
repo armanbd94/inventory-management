@@ -103,8 +103,8 @@
                                     </th>
                                     @endif
                                     <th>Sl</th>
-                                    <th>Purchase No</th>
-                                    <th>Supplier</th>
+                                    <th>Sale No</th>
+                                    <th>Customer</th>
                                     <th>Total Items</th>
                                     <th>Total Qty</th>
                                     <th>Total Discount</th>
