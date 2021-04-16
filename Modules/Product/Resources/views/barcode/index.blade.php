@@ -77,7 +77,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-4">
                                 <label for="row_qty">Barcode Size</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control" name="width" id="width" placeholder="Width">
