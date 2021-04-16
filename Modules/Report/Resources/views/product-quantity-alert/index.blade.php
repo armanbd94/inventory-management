@@ -29,6 +29,9 @@
                 <div class="dt-entry__heading">
                     <h2 class="dt-page__title mb-0 text-primary"><i class="{{ $page_icon }}"></i> {{ $sub_title }}</h2>
                 </div>
+                <!-- /entry heading -->
+
+
             </div>
             <!-- /entry header -->
 
@@ -37,42 +40,58 @@
 
                 <!-- Card Body -->
                 <div class="dt-card__body">
+
+                    <form id="form-filter">
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                <label for="name">Product Name</label>
+                                <input type="text" class="form-control" name="name" id="name" placeholder="Enter product name">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="code">Barcode</label>
+                                <input type="text" class="form-control" name="code" id="code" placeholder="Enter barcode">
+                            </div>
+                            <x-form.selectbox labelName="Brand" name="brand_id" col="col-md-3" class="selectpicker">
+                                @if (!$brands->isEmpty())
+                                    @foreach ($brands as $brand)
+                                        <option value="{{ $brand->id }}">{{ $brand->title }}</option>
+                                    @endforeach
+                                @endif
+                            </x-form.selectbox>
+                            <x-form.selectbox labelName="Category" name="catgory_id" col="col-md-3" class="selectpicker">
+                                @if (!$categories->isEmpty())
+                                    @foreach ($categories as $catgory)
+                                        <option value="{{ $catgory->id }}">{{ $catgory->name }}</option>
+                                    @endforeach
+                                @endif
+                            </x-form.selectbox>
+                            <div class="form-group col-md-12">
+                               <button type="button" class="btn btn-danger btn-sm float-right" id="btn-reset"
+                               data-toggle="tooltip" data-placement="top" data-original-title="Reset Data">
+                                   <i class="fas fa-redo-alt"></i>
+                                </button>
+                               <button type="button" class="btn btn-primary btn-sm float-right mr-2" id="btn-filter"
+                               data-toggle="tooltip" data-placement="top" data-original-title="Filter Data">
+                                   <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                     <table id="dataTable" class="table table-striped table-bordered table-hover">
                         <thead class="bg-primary">
                             <tr>
                                 <th>Sl</th>
-                                <th>Account Name</th>
-                                <th>Account No</th>
-                                <th>Debit</th>
-                                <th>Credit</th>
-                                <th>Balance</th>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Code</th>
+                                <th>Brand</th>
+                                <th>Category</th>
+                                <th>Unit</th>
+                                <th>Qty</th>
+                                <th>Alert Qty</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @if(!$accounts->isEmpty())
-                                @php $i=1;@endphp
-                                @foreach ($accounts as $key => $account)
-                                <tr>
-                                    <td>{{ $i++ }}</td>
-                                    <td>{{ $account->name }}</td>
-                                    <td>{{ $account->account_no }}</td>
-                                    <td>{{ number_format((float)($debit[$key] * -1),2,'.',',') }}</td>
-                                    <td>{{ number_format((float)$credit[$key],2,'.',',') }}</td>
-                                    <td>{{ number_format((float)($credit[$key] - $debit[$key]),2,'.',',') }}</td>
-                                </tr>
-                                @endforeach
-                            @endif
-                        </tbody>
-                        <tfoot>
-                            <tr class="bg-primary">
-                                <th></th>
-                                <th></th>
-                                <th class="text-right">Total</th>
-                                <th class="text-right"></th>
-                                <th class="text-right"></th>
-                                <th class="text-right"></th>
-                            </tr>
-                        </tfoot>
+                        <tbody></tbody>
                     </table>
 
                 </div>
@@ -91,15 +110,18 @@
 @endsection
 
 @push('script')
+<script src="js/spartan-multi-image-picker-min.js"></script>
 <script>
 var table;
 $(document).ready(function(){
 
     table = $('#dataTable').DataTable({
+        "processing": true, //Feature control the processing indicator
+        "serverSide": true, //Feature control DataTable server side processing mode
         "order": [], //Initial no order
         "responsive": true, //Make table responsive in mobile device
         "bInfo": true, //TO show the total number of data
-        "bFilter": true, //For datatable default search box show/hide
+        "bFilter": false, //For datatable default search box show/hide
         "lengthMenu": [
             [5, 10, 15, 25, 50, 100, 1000, 10000, -1],
             [5, 10, 15, 25, 50, 100, 1000, 10000, "All"]
@@ -111,20 +133,24 @@ $(document).ready(function(){
             infoEmpty: '',
             zeroRecords: '<strong class="text-danger">No Data Found</strong>'
         },
+        "ajax": {
+            "url": "{{route('product.quantity.alert.datatable.data')}}",
+            "type": "POST",
+            "data": function (data) {
+                data.name        = $("#form-filter #name").val();
+                data.code        = $("#form-filter #code").val();
+                data.brand_id    = $("#form-filter #brand_id").val();
+                data.category_id = $("#form-filter #category_id").val();
+                data._token      = _token;
+            }
+        },
         "columnDefs": [{
-                "targets": [0,1,2,3,4,5],
-                "orderable": false,
-            },
-            {
-                "targets": [0],
+
+                "targets": [0,1,3,4,5,6,7,8],
                 "className": "text-center"
             },
-            {
-                "targets": [3,4,5],
-                "className": "text-right"
-            }
         ],
-        "dom": "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6' <'float-right'fB>>>" +
+        "dom": "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6' <'float-right'B>>>" +
             "<'row'<'col-sm-12'tr>>" +
             "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'<'float-right'p>>>",
 
@@ -147,73 +173,57 @@ $(document).ready(function(){
                 customize: function (win) {
                     $(win.document.body).addClass('bg-white');
                 },
-                footer: true
             },
             {
                 "extend": 'csv',
                 'text':'CSV',
                 'className':'btn btn-secondary btn-sm text-white',
                 "title": "Menu List",
-                "filename": "account-balance-sheet",
+                "filename": "product-list",
                 "exportOptions": {
                     columns: function (index, data, node) {
                         return table.column(index).visible();
                     }
-                },
-                footer: true
+                }
             },
             {
                 "extend": 'excel',
                 'text':'Excel',
                 'className':'btn btn-secondary btn-sm text-white',
                 "title": "Menu List",
-                "filename": "account-balance-sheet",
+                "filename": "product-list",
                 "exportOptions": {
                     columns: function (index, data, node) {
                         return table.column(index).visible();
                     }
-                },
-                footer: true
+                }
             },
             {
                 "extend": 'pdf',
                 'text':'PDF',
                 'className':'btn btn-secondary btn-sm text-white',
                 "title": "Menu List",
-                "filename": "account-balance-sheet",
+                "filename": "product-list",
                 "orientation": "landscape", //portrait
                 "pageSize": "A4", //A3,A5,A6,legal,letter
                 "exportOptions": {
-                    columns: [0,1,2,3,4,5]
+                    columns: [1, 2, 3]
                 },
-                footer: true
             },
         ],
-
-        "footerCallback" : function(row,data,start,end,display)
-        {
-            var api = this.api(), data;
-
-            var intVal = function(i){
-                return typeof i === 'string' ? i.replace(/[\$,]/g,'')*1 : typeof i === 'number' ?  i : 0;
-            };
-
-            for(var index=3;index <= 5;index++)
-            {
-                total = api.column(index).data().reduce(function (a,b){
-                    return intVal(a) + intVal(b);
-                },0);
-
-                pageTotal = api.column(index, {page: 'current'}).data().reduce(function (a,b){
-                    return intVal(a) + intVal(b);
-                },0);
-
-                $(api.column(index).footer()).html('= '+parseFloat(pageTotal).toFixed(2)+' ('+parseFloat(total).toFixed(2)+' Total)');
-            }
-        }
     });
 
+    $('#btn-filter').click(function () {
+        table.ajax.reload();
+    });
+
+    $('#btn-reset').click(function () {
+        $('#form-filter')[0].reset();
+        $('#form-filter .selectpicker').selectpicker('refresh');
+        table.ajax.reload();
+    });
 
 });
+
 </script>
 @endpush

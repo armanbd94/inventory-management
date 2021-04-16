@@ -28,40 +28,11 @@
       <!-- Header toolbar-->
       <div class="dt-header__toolbar">
 
-        <!-- Search box -->
-        <form class="search-box d-none d-lg-block">
-          <input class="form-control border-0" placeholder="Search in app..." value="" type="search">
-          <span class="search-icon text-light-gray"><i class="icon icon-search icon-lg"></i></span>
-        </form>
         <!-- /search box -->
 
         <!-- Header Menu Wrapper -->
         <div class="dt-nav-wrapper">
-          <!-- Header Menu -->
-          <ul class="dt-nav d-lg-none">
-            <li class="dt-nav__item dt-notification-search dropdown">
 
-              <!-- Dropdown Link -->
-              <a href="#" class="dt-nav__link dropdown-toggle no-arrow" data-toggle="dropdown"
-                 aria-haspopup="true" aria-expanded="false"> <i class="icon icon-search-new icon-fw icon-lg"></i> </a>
-              <!-- /dropdown link -->
-
-              <!-- Dropdown Option -->
-              <div class="dropdown-menu">
-
-                <!-- Search Box -->
-                <form class="search-box right-side-icon">
-                  <input class="form-control form-control-lg" type="search" placeholder="Search in app...">
-                  <button type="submit" class="search-icon"><i class="icon icon-search icon-lg"></i></button>
-                </form>
-                <!-- /search box -->
-
-              </div>
-              <!-- /dropdown option -->
-
-            </li>
-          </ul>
-          <!-- /header menu -->
 
           <!-- Header Menu -->
           <ul class="dt-nav">
@@ -69,7 +40,7 @@
 
               <!-- Dropdown Link -->
               <a href="#" class="dt-nav__link dropdown-toggle no-arrow" data-toggle="dropdown"
-                 aria-haspopup="true" aria-expanded="false"> <i class="icon icon-notification icon-fw dt-icon-alert"></i>
+                 aria-haspopup="true" aria-expanded="false"> <i class="icon icon-notification icon-fw {{ $alert_product > 0 ? 'dt-icon-alert' : '' }}"></i>
               </a>
               <!-- /dropdown link -->
 
@@ -77,12 +48,7 @@
               <div class="dropdown-menu dropdown-menu-right dropdown-menu-media">
                 <!-- Dropdown Menu Header -->
                 <div class="dropdown-menu-header">
-                  <h4 class="title">Notifications (9)</h4>
-
-                  <div class="ml-auto action-area">
-                    <a href="javascript:void(0)">Mark All Read</a> <a class="ml-2" href="javascript:void(0)">
-                    <i class="icon icon-setting icon-lg text-light-gray"></i> </a>
-                  </div>
+                  <h4 class="title">Notifications</h4>
                 </div>
                 <!-- /dropdown menu header -->
 
@@ -91,84 +57,13 @@
 
                   <div class="h-auto">
                     <!-- Media -->
-                    <a href="javascript:void(0)" class="media">
-
-                      <!-- Avatar -->
-                      <img class="dt-avatar mr-3" src="images/user-avatar/stella-johnson.jpg" alt="User">
-                      <!-- avatar -->
-
+                    <a href="{{ url('product-quantity-alert') }}" class="media">
                       <!-- Media Body -->
                       <span class="media-body">
-                    <span class="message">
-                      <span class="user-name">Stella Johnson</span> and <span class="user-name">Chris Harris</span>
-                      have birthdays today. Help them celebrate!
+                      <span class="message">
+                        {{ $alert_product }} products exceeds alert quantity
+                      </span>
                     </span>
-                    <span class="meta-date">8 hours ago</span>
-                  </span>
-                      <!-- /media body -->
-
-                    </a>
-                    <!-- /media -->
-
-                    <!-- Media -->
-                    <a href="javascript:void(0)" class="media">
-
-                      <!-- Avatar -->
-                      <img class="dt-avatar mr-3" src="images/user-avatar/jeson-born.jpg" alt="User">
-                      <!-- avatar -->
-
-                      <!-- Media Body -->
-                      <span class="media-body">
-                    <span class="message">
-                      <span class="user-name">Jonathan Madano</span> commented on your post.
-                    </span>
-                    <span class="meta-date">9 hours ago</span>
-                  </span>
-                      <!-- /media body -->
-
-                    </a>
-                    <!-- /media -->
-
-                    <!-- Media -->
-                    <a href="javascript:void(0)" class="media">
-
-                      <!-- Avatar -->
-                      <img class="dt-avatar mr-3" src="images/user-avatar/selena.jpg" alt="User">
-                      <!-- avatar -->
-
-                      <!-- Media Body -->
-                      <span class="media-body">
-                    <span class="message">
-                      <span class="user-name">Chelsea Brown</span> sent a video recomendation.
-                    </span>
-                    <span class="meta-date">
-                      <i class="icon icon-menu-right text-primary icon-fw mr-1"></i>
-                      13 hours ago
-                    </span>
-                  </span>
-                      <!-- /media body -->
-
-                    </a>
-                    <!-- /media -->
-
-                    <!-- Media -->
-                    <a href="javascript:void(0)" class="media">
-
-                      <!-- Avatar -->
-                      <img class="dt-avatar mr-3" src="images/user-avatar/alex-dolgove.jpg" alt="User">
-                      <!-- avatar -->
-
-                      <!-- Media Body -->
-                      <span class="media-body">
-                    <span class="message">
-                      <span class="user-name">Alex Dolgove</span> and <span class="user-name">Chris Harris</span>
-                      like your post.
-                    </span>
-                    <span class="meta-date">
-                      <i class="icon icon-like text-light-blue icon-fw mr-1"></i>
-                      yesterday at 9:30
-                    </span>
-                  </span>
                       <!-- /media body -->
 
                     </a>
@@ -177,13 +72,6 @@
 
                 </div>
                 <!-- /dropdown menu body -->
-
-                <!-- Dropdown Menu Footer -->
-                <div class="dropdown-menu-footer">
-                  <a href="javascript:void(0)" class="card-link"> See All <i class="icon icon-arrow-right icon-fw"></i>
-                  </a>
-                </div>
-                <!-- /dropdown menu footer -->
               </div>
               <!-- /dropdown option -->
 

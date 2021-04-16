@@ -27,7 +27,7 @@
 
         <div class="col-md-6 mobile-hidden">
             <div class="login_left">
-                <div class="login_left_img"><img src="images/login-bg.jpg" alt="login background"></div>
+                <div class="login_left_img"><img src="images/login-bg.png" alt="login background"></div>
             </div>
         </div>
         <div class="col-md-6 bg-white">

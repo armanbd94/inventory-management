@@ -5181,7 +5181,7 @@ ul.login_tab li a.active {
 }
 
 .login_left_img:before {
-  background: rgba(0, 51, 102, 0.85);
+  /* background: rgba(0, 51, 102, 0.85); */
   z-index: 1;
   position: absolute;
   content: "";
