@@ -37,4 +37,8 @@ class ModuleRepository extends BaseRepository
         ->with('children')->get();
     }
 
+    public function delete_child(int $module_id)
+    {
+        return $this->model->where('parent_id',$module_id)->delete();
+    }
 }

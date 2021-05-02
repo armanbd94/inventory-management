@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Models\Permission;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Services\BaseService;
@@ -52,6 +53,8 @@ class ModuleService extends BaseService{
 
     public function delete($module)
     {
+        Permission::where('module_id',$module)->delete();
+        $this->module->delete_child($module);
         $result =  $this->module->delete($module);
         if($result){
             if(auth()->user()->role_id == 1){

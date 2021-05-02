@@ -70,7 +70,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     //User Routes
-    Route::get('user','UserController@index')->name('menu');
+    Route::get('user','UserController@index')->name('user');
     Route::group(['prefix' => 'user', 'as'=>'user.'], function () {
         Route::post('datatable-data', 'UserController@get_datatable_data')->name('datatable.data');
         Route::post('store-or-update', 'UserController@store_or_update_data')->name('store.or.update');
