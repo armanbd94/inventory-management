@@ -80,7 +80,7 @@ class ProductController extends BaseController
                         $row[] = table_checkbox($value->id);
                     }
                     $row[] = $no;
-                    $row[] = table_image($value->image,PRODUCT_IMAGE_PATH,$value->name);
+                    $row[] = table_image(PRODUCT_IMAGE_PATH,$value->image,$value->name);
                     $row[] = $value->name;
                     $row[] = $value->code;
                     $row[] = $value->brand->title;

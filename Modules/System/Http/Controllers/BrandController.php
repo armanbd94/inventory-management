@@ -56,7 +56,7 @@ class BrandController extends BaseController
                         $row[] = table_checkbox($value->id);
                     }
                     $row[] = $no;
-                    $row[] = table_image($value->image,BRAND_IMAGE_PATH,$value->title);
+                    $row[] = table_image(BRAND_IMAGE_PATH,$value->image,$value->title);
                     $row[] = $value->title;
                     $row[] = permission('brand-edit') ? change_status($value->id,$value->status,$value->title) : STATUS_LABEL[$value->status];;
                     $row[] = action_button($action);

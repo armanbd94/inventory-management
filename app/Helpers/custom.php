@@ -91,7 +91,7 @@ if(!function_exists('change_status')){
     }
 }
 if(!function_exists('table_image')){
-    function table_image($image = null,$path,string $name = null){
+    function table_image($path,$image = null,string $name = null){
             return $image ? "<img src='storage/".$path.$image."' alt='".$name."' style='width:50px;'/>"
             : "<img src='images/default.svg' alt='Default Image' style='width:50px;'/>";
     }
